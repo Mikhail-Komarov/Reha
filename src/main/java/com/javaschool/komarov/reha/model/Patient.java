@@ -44,6 +44,12 @@ public class Patient {
         Status = status;
     }
 
+    public Patient(String firstName, String lastName, String healthInsurance) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.healthInsurance = healthInsurance;
+    }
+
     public Patient() {
     }
 

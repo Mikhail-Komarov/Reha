@@ -12,7 +12,6 @@ public class SecurityEmployee implements UserDetails {
     private final String username;
     private final String password;
     private final List<SimpleGrantedAuthority> authorities;
-    private final boolean isActive = true;
 
     public SecurityEmployee(String username, String password, List<SimpleGrantedAuthority> authorities) {
         this.username = username;

@@ -1,39 +1,34 @@
 package com.javaschool.komarov.reha.controller;
 
 import com.javaschool.komarov.reha.model.Patient;
-import com.javaschool.komarov.reha.model.PatientStatus;
-import com.javaschool.komarov.reha.repository.PatientRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.javaschool.komarov.reha.service.PatientService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PatientController {
-    @Autowired
-    private PatientRepo patientRepo;
+    private final PatientService patientService;
+
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
 
     @GetMapping("/patient")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String main(Model model) {
-        model.addAttribute("name", "Test message");
-        Iterable<Patient> patients = patientRepo.findAll();
-        model.addAttribute("patient", patients);
+        model.addAttribute("patient", patientService.getAllPatients());
+        model.addAttribute("newPatient",new Patient());
         return "patient";
     }
 
-    @PostMapping("/patient")
+    @PostMapping("/patient/new")
     @PreAuthorize("hasAnyAuthority('employee:write')")
-    public String add(@RequestParam String firstName, @RequestParam String lastName,
-                      @RequestParam String healthInsurance, Model model) {
-        Patient patient = new Patient(firstName, lastName, healthInsurance, PatientStatus.ISTREATED);
-        patientRepo.save(patient);
-        Iterable<Patient> patients = patientRepo.findAll();
-        model.addAttribute("patient", patients);
-
-        return "patient";
+    public String add(@ModelAttribute("patient") Patient patient) {
+        patientService.savePatient(patient);
+        return "redirect:/patient";
     }
 }
