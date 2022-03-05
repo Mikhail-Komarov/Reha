@@ -1,5 +1,9 @@
 package com.javaschool.komarov.reha.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +18,9 @@ import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "prescription")
 public class Prescription {
     @Id
@@ -28,4 +35,25 @@ public class Prescription {
     private Employee employee;
     @OneToMany(mappedBy = "prescription")
     private Set<PrescriptionItem> prescriptionItems;
+
+    public Prescription(Long id, String diagnosis, Patient patient, Employee employee, Set<PrescriptionItem> prescriptionItems) {
+        this.id = id;
+        this.diagnosis = diagnosis;
+        this.patient = patient;
+        this.employee = employee;
+        this.prescriptionItems = prescriptionItems;
+    }
+
+    public Prescription(String diagnosis, Patient patient, Employee employee, Set<PrescriptionItem> prescriptionItems) {
+        this.diagnosis = diagnosis;
+        this.patient = patient;
+        this.employee = employee;
+        this.prescriptionItems = prescriptionItems;
+    }
+
+    public Prescription(String diagnosis, Patient patient, Employee employee) {
+        this.diagnosis = diagnosis;
+        this.patient = patient;
+        this.employee = employee;
+    }
 }

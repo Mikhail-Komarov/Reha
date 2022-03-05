@@ -1,5 +1,9 @@
 package com.javaschool.komarov.reha.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +18,9 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "prescriptionItem")
 public class PrescriptionItem {
     @Id
@@ -36,5 +43,47 @@ public class PrescriptionItem {
     @Enumerated(EnumType.STRING)
     private PrescriptionItemStatus prescriptionItemStatus;
     private String cancellationReason;
+
+    public PrescriptionItem(Long id, int dose, LocalDate startTreatment, LocalDate endTreatment, String timePattern, Prescription prescription, Set<Event> events,
+                            Therapy therapy, Employee employee, PrescriptionItemStatus prescriptionItemStatus, String cancellationReason) {
+        this.id = id;
+        this.dose = dose;
+        this.startTreatment = startTreatment;
+        this.endTreatment = endTreatment;
+        this.timePattern = timePattern;
+        this.prescription = prescription;
+        this.events = events;
+        this.therapy = therapy;
+        this.employee = employee;
+        this.prescriptionItemStatus = prescriptionItemStatus;
+        this.cancellationReason = cancellationReason;
+    }
+
+    public PrescriptionItem(int dose, LocalDate startTreatment, LocalDate endTreatment, String timePattern, Prescription prescription, Set<Event> events,
+                            Therapy therapy, Employee employee, PrescriptionItemStatus prescriptionItemStatus, String cancellationReason) {
+        this.dose = dose;
+        this.startTreatment = startTreatment;
+        this.endTreatment = endTreatment;
+        this.timePattern = timePattern;
+        this.prescription = prescription;
+        this.events = events;
+        this.therapy = therapy;
+        this.employee = employee;
+        this.prescriptionItemStatus = prescriptionItemStatus;
+        this.cancellationReason = cancellationReason;
+    }
+
+    public PrescriptionItem(LocalDate startTreatment, LocalDate endTreatment, String timePattern, Prescription prescription, Set<Event> events, Therapy therapy,
+                            Employee employee, PrescriptionItemStatus prescriptionItemStatus, String cancellationReason) {
+        this.startTreatment = startTreatment;
+        this.endTreatment = endTreatment;
+        this.timePattern = timePattern;
+        this.prescription = prescription;
+        this.events = events;
+        this.therapy = therapy;
+        this.employee = employee;
+        this.prescriptionItemStatus = prescriptionItemStatus;
+        this.cancellationReason = cancellationReason;
+    }
 
 }

@@ -1,5 +1,9 @@
 package com.javaschool.komarov.reha.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +17,9 @@ import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "patient")
 public class Patient {
     @Id
@@ -48,56 +55,5 @@ public class Patient {
         this.firstName = firstName;
         this.lastName = lastName;
         this.healthInsurance = healthInsurance;
-    }
-
-    public Patient() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getHealthInsurance() {
-        return healthInsurance;
-    }
-
-    public void setHealthInsurance(String healthInsurance) {
-        this.healthInsurance = healthInsurance;
-    }
-
-    public PatientStatus getStatus() {
-        return Status;
-    }
-
-    public void setStatus(PatientStatus status) {
-        Status = status;
-    }
-
-    public Set<Prescription> getPrescriptions() {
-        return prescriptions;
-    }
-
-    public void setPrescriptions(Set<Prescription> prescriptions) {
-        this.prescriptions = prescriptions;
     }
 }

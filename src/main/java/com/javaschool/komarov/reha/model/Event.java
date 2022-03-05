@@ -1,5 +1,9 @@
 package com.javaschool.komarov.reha.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +16,9 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "event")
 public class Event {
     @Id
@@ -25,4 +32,25 @@ public class Event {
     private LocalDateTime dateTime;
     @ManyToOne
     private PrescriptionItem prescriptionItem;
+
+    public Event(Long id, EventStatus eventStatus, String cancellationReason, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
+        this.id = id;
+        this.eventStatus = eventStatus;
+        this.cancellationReason = cancellationReason;
+        this.dateTime = dateTime;
+        this.prescriptionItem = prescriptionItem;
+    }
+
+    public Event(EventStatus eventStatus, String cancellationReason, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
+        this.eventStatus = eventStatus;
+        this.cancellationReason = cancellationReason;
+        this.dateTime = dateTime;
+        this.prescriptionItem = prescriptionItem;
+    }
+
+    public Event(EventStatus eventStatus, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
+        this.eventStatus = eventStatus;
+        this.dateTime = dateTime;
+        this.prescriptionItem = prescriptionItem;
+    }
 }

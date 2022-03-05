@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.controller;
 
-import com.javaschool.komarov.reha.model.Patient;
+import com.javaschool.komarov.reha.dto.PatientDto;
 import com.javaschool.komarov.reha.service.PatientService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,14 +21,14 @@ public class PatientController {
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String main(Model model) {
         model.addAttribute("patient", patientService.getAllPatients());
-        model.addAttribute("newPatient",new Patient());
+        model.addAttribute("newPatient", new PatientDto());
         return "patient";
     }
 
     @PostMapping("/patient/new")
     @PreAuthorize("hasAnyAuthority('employee:write')")
-    public String add(@ModelAttribute("patient") Patient patient) {
-        patientService.savePatient(patient);
+    public String add(@ModelAttribute("patient") PatientDto patientDto) {
+        patientService.savePatient(patientDto);
         return "redirect:/patient";
     }
 }
