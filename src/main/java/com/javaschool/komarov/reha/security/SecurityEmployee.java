@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.security;
 
-import com.javaschool.komarov.reha.model.Employee;
+import com.javaschool.komarov.reha.dto.EmployeeDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,10 +54,10 @@ public class SecurityEmployee implements UserDetails {
         return true;
     }
 
-    public static UserDetails fromEmployee(Employee employee) {
+    public static UserDetails fromEmployee(EmployeeDto employeeDto) {
         return new org.springframework.security.core.userdetails.User(
-                employee.getLogin(), employee.getPassword(),
-                employee.getRole().getAuthority()
+                employeeDto.getLogin(), employeeDto.getPassword(),
+                employeeDto.getRole().getAuthority()
         );
     }
 }

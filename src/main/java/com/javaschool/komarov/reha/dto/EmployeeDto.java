@@ -14,6 +14,7 @@ public class EmployeeDto {
     private String firstName;
     private String lastName;
     private String login;
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
 
