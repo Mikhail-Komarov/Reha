@@ -5,16 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 @Getter
 @Setter
 @NoArgsConstructor
 public class TherapyDto {
     private Long id;
     private String name;
-    @Enumerated(EnumType.STRING)
     private TherapyType therapyType;
 
     public TherapyDto(Long id, String name, TherapyType therapyType) {

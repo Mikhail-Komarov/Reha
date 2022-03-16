@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventDto {
     private Long id;
-    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
     private String cancellationReason;
     private LocalDateTime dateTime;

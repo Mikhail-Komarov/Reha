@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 @Getter
@@ -18,7 +16,6 @@ public class PrescriptionItemDto {
     private LocalDate startTreatment;
     private LocalDate endTreatment;
     private String timePattern;
-    @Enumerated(EnumType.STRING)
     private PrescriptionItemStatus prescriptionItemStatus;
     private String cancellationReason;
     private EmployeeDto employee;

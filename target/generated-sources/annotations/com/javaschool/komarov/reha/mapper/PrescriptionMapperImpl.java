@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-03-05T19:36:29+0300",
+    date = "2022-03-06T12:02:45+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_312 (BellSoft)"
 )
 @Component
@@ -91,6 +91,7 @@ public class PrescriptionMapperImpl implements PrescriptionMapper {
         employeeDto.setFirstName( employee.getFirstName() );
         employeeDto.setLastName( employee.getLastName() );
         employeeDto.setLogin( employee.getLogin() );
+        employeeDto.setPassword( employee.getPassword() );
         employeeDto.setRole( employee.getRole() );
 
         return employeeDto;
@@ -123,6 +124,7 @@ public class PrescriptionMapperImpl implements PrescriptionMapper {
         employee.setFirstName( employeeDto.getFirstName() );
         employee.setLastName( employeeDto.getLastName() );
         employee.setLogin( employeeDto.getLogin() );
+        employee.setPassword( employeeDto.getPassword() );
         employee.setRole( employeeDto.getRole() );
 
         return employee;

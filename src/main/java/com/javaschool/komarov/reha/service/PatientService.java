@@ -2,9 +2,12 @@ package com.javaschool.komarov.reha.service;
 
 import com.javaschool.komarov.reha.dto.PatientDto;
 import com.javaschool.komarov.reha.mapper.PatientMapper;
+import com.javaschool.komarov.reha.model.PatientStatus;
 import com.javaschool.komarov.reha.repository.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PatientService {
@@ -18,6 +21,7 @@ public class PatientService {
     }
 
     public void savePatient(PatientDto patientDto) {
+        patientDto.setStatus(PatientStatus.NOTDEFINED);
         patientRepo.save(patientMapper.toModel(patientDto));
     }
 
@@ -25,4 +29,11 @@ public class PatientService {
         return patientMapper.toDTOList(patientRepo.findAll());
     }
 
+    public Optional<PatientDto> getPatientById(Long id) {
+        return Optional.of(patientMapper.toDTO(patientRepo.findById(id).get()));
+    }
+
+    public void updatePatientStatus(long id, PatientStatus status) {
+        patientRepo.updatePatientStatus(id, status);
+    }
 }

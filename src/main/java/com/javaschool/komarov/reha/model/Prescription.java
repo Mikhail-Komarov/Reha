@@ -28,7 +28,7 @@ public class Prescription {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
     private String diagnosis;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER/*, cascade = CascadeType.ALL*/)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
     @ManyToOne

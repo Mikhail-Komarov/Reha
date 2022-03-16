@@ -32,21 +32,28 @@
             <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">FirstName</th>
-                <th scope="col">LastName</th>
-                <th scope="col">HealthInsurance</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Health insurance</th>
+                <th scope="col">Status</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="patient: ${patient}">
+            <tr th:each="patient: ${patient}" th:onclick="'javascript:rowClicked(\'' + ${patient.getId()} + '\');'">
                 <td th:text="${patient.id}" />
                 <td th:text="${patient.firstName}" />
                 <td th:text="${patient.lastName}" />
                 <td th:text="${patient.healthInsurance}" />
+                <td th:text="${patient.status}" />
             </tr>
             </tbody>
         </table>
     </div>
 </div>
 </body>
+<script>
+    function rowClicked(value) {
+        location.href = "patient/" + value + "/prescription/";
+    }
+</script>
 </html>

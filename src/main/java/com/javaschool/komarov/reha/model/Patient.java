@@ -33,7 +33,7 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     private PatientStatus Status;
     @OneToMany(mappedBy = "patient",
-            cascade = CascadeType.ALL, orphanRemoval = true)
+            /*cascade = CascadeType.ALL,*/ orphanRemoval = true)
     private Set<Prescription> prescriptions;
 
     public Patient(String firstName, String lastName, String healthInsurance, PatientStatus status, Set<Prescription> prescriptions) {
