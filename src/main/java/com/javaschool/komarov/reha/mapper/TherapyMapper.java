@@ -8,4 +8,6 @@ import org.mapstruct.Mapper;
 public interface TherapyMapper {
     TherapyDto toDTO(Therapy model);
     Therapy toModel(TherapyDto dto);
+    Iterable<TherapyDto> toDTOList(Iterable<Therapy> models);
+    Iterable<Therapy> toModelList(Iterable<TherapyDto> dtos);
 }

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Prescription</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+<body>
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a href="javascript: document.logoutForm.submit()" class="dropdown-toggle">Sign out</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out"/>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <form th:method="GET" th:action="@{/event}">
+            <select name="filterDate">
+                <option value="all" selected>Show all</option>
+                <option value="today">Today</option>
+                <option value="hour"> At this hour</option>
+            </select>
+            <br>
+            <input type="text" name="filterHealthInsurance" placeholder="Enter insurance number"/>
+            <button type="submit">Get</button>
+        </form>
+    </div>
+    <div>Events:</div>
+    <div class="card-body">
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Patient</th>
+                <th scope="col">Insurance</th>
+                <th scope="col">Therapy</th>
+                <th scope="col">Dose</th>
+                <th scope="col">Date and time</th>
+                <th scope="col">Doctor</th>
+                <th scope="col">Status</th>
+                <th scope="col">Cancellation reason</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="event: ${events}" id="myModal" data-toggle="modal" data-target="#exampleModal" th:onclick="'javascript:Values('+${event.id}+')'">
+                <td th:text="${event.prescriptionItem.prescription.patient.firstName} + ' '
+        + ${event.prescriptionItem.prescription.patient.lastName}"/>
+                <td th:text="${event.prescriptionItem.prescription.patient.healthInsurance}"/>
+                <td th:text="${event.prescriptionItem.therapy.name}"/>
+                <td th:text="${event.prescriptionItem.dose}"/>
+                <td th:text="${#temporals.format(event.dateTime, 'dd-MM-yyyy HH:mm')}"/>
+                <td th:text="${event.prescriptionItem.employee.firstName} + ' ' + ${event.prescriptionItem.employee.lastName} "/>
+                <td th:text="${event.eventStatus}"/>
+                <td th:text="${event.cancellationReason}"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel"
+         aria-hidden="true" sec:authorize="hasAnyAuthority('employee:read')">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Change event status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="table" th:method="POST" th:action="@{'/event/update'}" th:object="${newEvent}">
+                        <input id="id" name="id" type="hidden" value=""/>
+                        <div>Set status</div>
+                        <select th:field="*{eventStatus}">
+                            <option value="COMPLETED" selected>Completed</option>
+                            <option value="CANCELLED">Canceled</option>
+                        </select>
+                        <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{eventStatus}"/>
+                        <br>
+                        <div>Set cancellation reason</div>
+                        <textarea th:field="*{cancellationReason}" class="form-control" aria-label="With textarea" name="cancellationReason"
+                                  placeholder="In case of cancellation, specify the reason"></textarea>
+                        <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{cancellationReason}"/>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $("#eventModal").modal("hide");
+
+    function Values(ID) {
+        $("#id").val(ID);
+    }
+</script>
+

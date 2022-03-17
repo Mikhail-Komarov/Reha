@@ -21,9 +21,16 @@
     <div class="card-body">
         <div sec:authorize="hasAnyAuthority('employee:write')">
             <form th:method="POST" th:action="@{patient/new}" th:object="${newPatient}">
-                <input type="text" th:field ="*{firstName}" name="firstName" placeholder="first name" />
-                <input type="text" th:field ="*{lastName}" name="lastName" placeholder="last name" />
-                <input type="text" th:field ="*{healthInsurance}" name="healthInsurance" placeholder="healthInsurance" />
+                <input type="text" th:field ="*{firstName}" name="firstName" placeholder="first name"title="the use of numbers and special characters is not allowed" required/>
+                <!--pattern="^[a-zA-Z][a-zA-Z]{1,20}$"-->
+                <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{firstName}"/>
+                <input type="text" th:field ="*{lastName}" name="lastName" placeholder="last name" title="the use of numbers and special characters is not allowed" required/>
+                <!--pattern="^[a-zA-Z][a-zA-Z]{1,20}$"-->
+                <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{lastName}"/>
+                <input type="text" th:field ="*{healthInsurance}" name="healthInsurance" placeholder="healthInsurance"
+                       title="8 characters, numbers only" required/>
+                <!--pattern="[0-9]{8}"-->
+                <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{healthInsurance}"/>
                 <button type="submit">Add</button>
             </form>
         </div>
@@ -39,7 +46,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="patient: ${patient}" th:onclick="'javascript:rowClicked(\'' + ${patient.getId()} + '\');'">
+            <tr th:each="patient: ${patients}" th:onclick="|rowClicked('${patient.getId()}');|">
                 <td th:text="${patient.id}" />
                 <td th:text="${patient.firstName}" />
                 <td th:text="${patient.lastName}" />

@@ -10,12 +10,13 @@ import com.javaschool.komarov.reha.model.Patient;
 import com.javaschool.komarov.reha.model.Prescription;
 import com.javaschool.komarov.reha.model.PrescriptionItem;
 import com.javaschool.komarov.reha.model.Therapy;
+import java.util.ArrayList;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-03-06T12:02:45+0300",
+    date = "2022-03-16T23:16:09+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_312 (BellSoft)"
 )
 @Component
@@ -63,6 +64,20 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
         prescriptionItem.setCancellationReason( dto.getCancellationReason() );
 
         return prescriptionItem;
+    }
+
+    @Override
+    public Iterable<PrescriptionItemDto> toDTOList(Iterable<PrescriptionItem> models) {
+        if ( models == null ) {
+            return null;
+        }
+
+        ArrayList<PrescriptionItemDto> iterable = new ArrayList<PrescriptionItemDto>();
+        for ( PrescriptionItem prescriptionItem : models ) {
+            iterable.add( toDTO( prescriptionItem ) );
+        }
+
+        return iterable;
     }
 
     protected EmployeeDto employeeToEmployeeDto(Employee employee) {

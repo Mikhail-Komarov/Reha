@@ -3,6 +3,7 @@ package com.javaschool.komarov.reha.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,8 +28,10 @@ public class PrescriptionItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
-    private int dose;
+    private Integer dose;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startTreatment;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endTreatment;
     private String timePattern;
     @ManyToOne

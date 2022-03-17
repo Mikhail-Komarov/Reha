@@ -12,12 +12,13 @@ import com.javaschool.komarov.reha.model.Patient;
 import com.javaschool.komarov.reha.model.Prescription;
 import com.javaschool.komarov.reha.model.PrescriptionItem;
 import com.javaschool.komarov.reha.model.Therapy;
+import java.util.ArrayList;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-03-06T12:02:45+0300",
+    date = "2022-03-16T23:16:09+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_312 (BellSoft)"
 )
 @Component
@@ -55,6 +56,34 @@ public class EventMapperImpl implements EventMapper {
         event.setPrescriptionItem( prescriptionItemDtoToPrescriptionItem( dto.getPrescriptionItem() ) );
 
         return event;
+    }
+
+    @Override
+    public Iterable<EventDto> toDTOList(Iterable<Event> models) {
+        if ( models == null ) {
+            return null;
+        }
+
+        ArrayList<EventDto> iterable = new ArrayList<EventDto>();
+        for ( Event event : models ) {
+            iterable.add( toDTO( event ) );
+        }
+
+        return iterable;
+    }
+
+    @Override
+    public Iterable<Event> toModelList(Iterable<EventDto> dtos) {
+        if ( dtos == null ) {
+            return null;
+        }
+
+        ArrayList<Event> iterable = new ArrayList<Event>();
+        for ( EventDto eventDto : dtos ) {
+            iterable.add( toModel( eventDto ) );
+        }
+
+        return iterable;
     }
 
     protected EmployeeDto employeeToEmployeeDto(Employee employee) {

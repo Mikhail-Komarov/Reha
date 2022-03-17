@@ -4,20 +4,23 @@ import com.javaschool.komarov.reha.dto.PatientDto;
 import com.javaschool.komarov.reha.mapper.PatientMapper;
 import com.javaschool.komarov.reha.model.PatientStatus;
 import com.javaschool.komarov.reha.repository.PatientRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PatientService {
     private final PatientMapper patientMapper;
     private final PatientRepo patientRepo;
 
-    @Autowired
     public PatientService(PatientMapper patientMapper, PatientRepo patientRepo) {
         this.patientMapper = patientMapper;
         this.patientRepo = patientRepo;
+    }
+
+    public Boolean checkPatientInDb(String healthInsurance) {
+        return patientRepo.getPatientByHealthInsurance(healthInsurance).isPresent();
     }
 
     public void savePatient(PatientDto patientDto) {
@@ -33,7 +36,24 @@ public class PatientService {
         return Optional.of(patientMapper.toDTO(patientRepo.findById(id).get()));
     }
 
-    public void updatePatientStatus(long id, PatientStatus status) {
-        patientRepo.updatePatientStatus(id, status);
+    public void updatePatientStatus(PatientDto patientDto) {
+        if (!hasActiveEvent(patientDto.getId())) {
+            patientRepo.updatePatientStatus(patientDto.getId(), patientDto.getStatus());
+        }
+    }
+
+    public void setStatusIsTreated(PatientDto patientDto) {
+        if (!patientDto.getStatus().equals(PatientStatus.ISTREATED)) {
+            patientDto.setStatus(PatientStatus.ISTREATED);
+        }
+        updatePatientStatus(patientDto);
+    }
+
+    public Set<Long> patientIdWithActiveEvent() {
+        return patientRepo.findAllPatientIdWithActiveEvent();
+    }
+
+    public Boolean hasActiveEvent(Long id) {
+        return patientIdWithActiveEvent().contains(id);
     }
 }

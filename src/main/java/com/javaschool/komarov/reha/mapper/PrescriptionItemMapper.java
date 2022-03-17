@@ -8,4 +8,5 @@ import org.mapstruct.Mapper;
 public interface PrescriptionItemMapper {
     PrescriptionItemDto toDTO(PrescriptionItem model);
     PrescriptionItem toModel(PrescriptionItemDto dto);
+    Iterable<PrescriptionItemDto> toDTOList(Iterable<PrescriptionItem> models);
 }

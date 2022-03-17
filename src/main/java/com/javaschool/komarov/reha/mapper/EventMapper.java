@@ -8,4 +8,6 @@ import org.mapstruct.Mapper;
 public interface EventMapper {
     EventDto toDTO(Event model);
     Event toModel(EventDto dto);
+    Iterable<EventDto> toDTOList(Iterable<Event> models);
+    Iterable<Event> toModelList(Iterable<EventDto> dtos);
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,8 +31,7 @@ public class Patient {
     private String healthInsurance;
     @Enumerated(EnumType.STRING)
     private PatientStatus Status;
-    @OneToMany(mappedBy = "patient",
-            /*cascade = CascadeType.ALL,*/ orphanRemoval = true)
+    @OneToMany(mappedBy = "patient")
     private Set<Prescription> prescriptions;
 
     public Patient(String firstName, String lastName, String healthInsurance, PatientStatus status, Set<Prescription> prescriptions) {

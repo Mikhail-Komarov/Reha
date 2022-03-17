@@ -32,12 +32,17 @@ public class PrescriptionService {
         return prescriptionMapper.toDTOList(prescriptionRepo.findByPatientId(id));
     }
 
-    public void savePrescription(long patientId, UserDetails userDetails, String diagnosis) {
+    public void savePrescription(PrescriptionDto prescriptionDto, UserDetails userDetails, Long patientId) {
 
         Optional<EmployeeDto> employee = employeeService.getEmployeeByLogin(userDetails.getUsername());
         PatientDto patientDto = patientService.getPatientById(patientId).get();
-        PrescriptionDto prescription = new PrescriptionDto(diagnosis,patientDto, employee.get());
-        prescriptionRepo.save(prescriptionMapper.toModel(prescription));
+        prescriptionDto.setEmployee(employee.get());
+        prescriptionDto.setPatient(patientDto);
+        prescriptionRepo.save(prescriptionMapper.toModel(prescriptionDto));
+    }
+
+    public Optional<PrescriptionDto> getPrescriptionById(Long id) {
+        return Optional.of(prescriptionMapper.toDTO(prescriptionRepo.findById(id).get()));
     }
 
 }

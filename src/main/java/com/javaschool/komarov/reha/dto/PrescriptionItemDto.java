@@ -4,23 +4,35 @@ import com.javaschool.komarov.reha.model.PrescriptionItemStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class PrescriptionItemDto {
     private Long id;
-    private int dose;
+    private Integer dose;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startTreatment;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endTreatment;
     private String timePattern;
+    @DateTimeFormat(pattern = "dd.MM.yy")
+    private List<LocalDate> dat;
+    @DateTimeFormat(pattern = "H:mm")
+    private List<LocalTime> tim;
     private PrescriptionItemStatus prescriptionItemStatus;
     private String cancellationReason;
     private EmployeeDto employee;
     private TherapyDto therapy;
     private PrescriptionDto prescription;
+    private long employeeId;
+    private long therapyId;
+    private long prescriptionId;
 
     public PrescriptionItemDto(Long id, int dose, LocalDate startTreatment, LocalDate endTreatment, String timePattern, PrescriptionItemStatus prescriptionItemStatus,
                                String cancellationReason, EmployeeDto employee, TherapyDto therapy, PrescriptionDto prescription) {
