@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <title>Prescription items</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -36,13 +37,13 @@
     <img src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
     <div class="card-body">
         <h5 class="card-title">Patient's info:</h5>
-        <p class="card-text" th:text="${'First name: '+ patientInfo.firstName}"/>
-        <p class="card-text" th:text="${'Last name: '+ patientInfo.lastName}"/>
-        <p class="card-text" th:text="${'Insurance number: '+ patientInfo.healthInsurance}"/>
-        <p class="card-text" th:text="${'Status: '+ patientInfo.status}"/>
-        <p class="card-text" th:text="${'diagnosis: '+ prescriptionInfo.diagnosis}"/>
+        <p class="card-text" th:text="${'First name: '+ patientInfo.firstName}"></p>
+        <p class="card-text" th:text="${'Last name: '+ patientInfo.lastName}"></p>
+        <p class="card-text" th:text="${'Insurance number: '+ patientInfo.healthInsurance}"></p>
+        <p class="card-text" th:text="${'Status: '+ patientInfo.status}"></p>
+        <p class="card-text" th:text="${'diagnosis: '+ prescriptionInfo.diagnosis}"></p>
         <p class="card-text" th:text="${'doctor: '+ prescriptionInfo.employee.firstName
-        + ' ' + prescriptionInfo.employee.lastName}"/>
+        + ' ' + prescriptionInfo.employee.lastName}"></p>
     </div>
 </div>
 <br>
@@ -54,6 +55,7 @@
         Add item</a></button>
 </div>
 <br>
+<div class="alert alert-warning col-md-3" role="alert" th:if="${hasError}"  th:text="${error}"></div>
 <div class="card text-center">
     <div class="card-body">
         <br/>
@@ -61,6 +63,7 @@
         <table class="table table-striped table-hover table-bordered">
             <thead>
             <tr>
+                <th scope="col">Id</th>
                 <th scope="col">Therapy</th>
                 <th scope="col">Dose</th>
                 <th scope="col">Pattern</th>
@@ -72,13 +75,14 @@
             </thead>
             <tbody>
             <tr th:each="item: ${items}" data-toggle="modal" data-target="#updModal" th:onclick="'javascript:Values('+${item.id}+')'">
-                <td th:text="${item.therapy.name}"/>
-                <td th:text="${item.dose}"/>
-                <td th:text="${item.timePattern}"/>
-                <td th:text="${item.startTreatment}"/>
-                <td th:text="${item.endTreatment}"/>
-                <td th:text="${item.prescriptionItemStatus}"/>
-                <td th:text="${item.cancellationReason}"/>
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.therapy.name}"></td>
+                <td th:text="${item.dose}"></td>
+                <td th:text="${item.timePattern}"></td>
+                <td th:text="${item.startTreatment}"></td>
+                <td th:text="${item.endTreatment}"></td>
+                <td th:text="${item.prescriptionItemStatus}"></td>
+                <td th:text="${item.cancellationReason}"></td>
             </tr>
             </tbody>
         </table>
@@ -101,21 +105,22 @@
                           th:object="${newItem}">
 
                         <label for="validationDose" class="col-form-label">Dose:</label>
-                        <input  th:class="${#fields.hasErrors('dose')} ? 'form-control is-invalid'"
-                                type="text" th:field="*{dose}" name="dose" placeholder="dose" min="0"
-                                id="validationDose" aria-describedby="validationDoseFeedback" />
+                        <input th:class="${#fields.hasErrors('dose')} ? 'form-control is-invalid'"
+                               type="text" th:field="*{dose}" name="dose" placeholder="dose" min="0"
+                               id="validationDose" aria-describedby="validationDoseFeedback"/>
                         <div id="validationDoseFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{dose}"></div>
                         <br>
                         <label for="validationStart" class="col-form-label">Start treatment:</label>
-                        <input  th:class="${#fields.hasErrors('startTreatment')} ? 'form-control is-invalid'"
-                                type="date" th:field="*{startTreatment}" name="startTreatment" placeholder="startTreatment"
-                                id="validationStart" aria-describedby="validationStartFeedback" required />
-                        <div id="validationStartFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{startTreatment}"></div>
+                        <input th:class="${#fields.hasErrors('startTreatment')} ? 'form-control is-invalid'"
+                               type="date" th:field="*{startTreatment}" name="startTreatment" placeholder="startTreatment"
+                               id="validationStart" aria-describedby="validationStartFeedback" required/>
+                        <div id="validationStartFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error"
+                             th:errors="*{startTreatment}"></div>
                         <br>
                         <label for="validationEnd" class="col-form-label">End treatment:</label>
-                        <input  th:class="${#fields.hasErrors('endTreatment')} ? 'form-control is-invalid'"
-                                type="date" th:field="*{endTreatment}" name="endTreatment" placeholder="endTreatment"
-                                id="validationEnd" aria-describedby="validationEndFeedback" required />
+                        <input th:class="${#fields.hasErrors('endTreatment')} ? 'form-control is-invalid'"
+                               type="date" th:field="*{endTreatment}" name="endTreatment" placeholder="endTreatment"
+                               id="validationEnd" aria-describedby="validationEndFeedback" required/>
                         <div id="validationEndFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{endTreatment}"></div>
                         <input type="hidden" id="employeeId" th:name="employeeId" th:value="${doctor.id}"/>
                         <input type="hidden" id="prescriptionId" th:name="prescriptionId" th:value="${prescriptionInfo.id}"/>
@@ -176,41 +181,45 @@
                                         ${prescriptionInfo.id} +'/upd'}"
                           th:object="${updateItem}">
                         <label class="col-form-label">Status:</label>
-                        <select th:class="${#fields.hasErrors('prescriptionItemStatus')} ? 'celect-control is-invalid'" th:field="*{prescriptionItemStatus}" th:name="therapyId">
+                        <select th:class="${#fields.hasErrors('prescriptionItemStatus')} ? 'celect-control is-invalid'" th:field="*{prescriptionItemStatus}"
+                                th:name="therapyId">
                             <option value="PRESCRIBED" selected>Prescribed</option>
                             <option value="CANCELLED">Cancelled</option>
                         </select>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{prescriptionItemStatus}"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{prescriptionItemStatus}"></div>
 
                         <div>Set cancellation reason</div>
                         <label for="validationReason" class="col-form-label"></label>
-                        <textarea   th:class="${#fields.hasErrors('cancellationReason')} ? 'form-control is-invalid'"
-                                    th:field="*{cancellationReason}" aria-label="With textarea" name="cancellationReason"
-                                    placeholder="In case of cancellation, specify the reason"
-                                    id="validationReason" aria-describedby="validationReasonFeedback" ></textarea>
-                        <div id="validationReasonFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{cancellationReason}"></div>
+                        <textarea th:class="${#fields.hasErrors('cancellationReason')} ? 'form-control is-invalid'"
+                                  th:field="*{cancellationReason}" aria-label="With textarea" name="cancellationReason"
+                                  placeholder="In case of cancellation, specify the reason"
+                                  id="validationReason" aria-describedby="validationReasonFeedback"></textarea>
+                        <div id="validationReasonFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error"
+                             th:errors="*{cancellationReason}"></div>
 
                         <input id="id" name="id" type="hidden" value=""/>
 
                         <label for="validationDoseUpd" class="col-form-label">Dose:</label>
-                        <input  th:class="${#fields.hasErrors('dose')} ? 'form-control is-invalid'"
-                                type="text" th:field="*{dose}" name="dose" placeholder="dose"
-                                id="validationDoseUpd" aria-describedby="validationDoseUpdFeedback" />
+                        <input th:class="${#fields.hasErrors('dose')} ? 'form-control is-invalid'"
+                               type="text" th:field="*{dose}" name="dose" placeholder="dose"
+                               id="validationDoseUpd" aria-describedby="validationDoseUpdFeedback"/>
                         <div id="validationDoseUpdFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{dose}"></div>
                         <br>
 
                         <label for="validationStartUpd" class="col-form-label">Start treatment:</label>
-                        <input  th:class="${#fields.hasErrors('startTreatment')} ? 'form-control is-invalid'"
-                                type="date" th:field="*{startTreatment}" name="startTreatment" placeholder="startTreatment"
-                                id="validationStartUpd" aria-describedby="validationStartUpdFeedback" />
-                        <div id="validationStartUpdFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{startTreatment}"></div>
+                        <input th:class="${#fields.hasErrors('startTreatment')} ? 'form-control is-invalid'"
+                               type="date" th:field="*{startTreatment}" name="startTreatment" placeholder="startTreatment"
+                               id="validationStartUpd" aria-describedby="validationStartUpdFeedback"/>
+                        <div id="validationStartUpdFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error"
+                             th:errors="*{startTreatment}"></div>
                         <br>
 
                         <label for="validationEndUpd" class="col-form-label">End treatment:</label>
-                        <input  th:class="${#fields.hasErrors('endTreatment')} ? 'form-control is-invalid'"
-                                type="date" th:field="*{endTreatment}" name="endTreatment" placeholder="endTreatment"
-                                id="validationEndUpd" aria-describedby="validationEndUpdFeedback" />
-                        <div id="validationEndUpdFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{endTreatment}"></div>
+                        <input th:class="${#fields.hasErrors('endTreatment')} ? 'form-control is-invalid'"
+                               type="date" th:field="*{endTreatment}" name="endTreatment" placeholder="endTreatment"
+                               id="validationEndUpd" aria-describedby="validationEndUpdFeedback"/>
+                        <div id="validationEndUpdFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error"
+                             th:errors="*{endTreatment}"></div>
                         <br>
                         <div> Date and time pattern:
                             <div class="">
@@ -223,7 +232,7 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"/>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"></div>
                             <div class="">
                                 <strong>Select time:</strong>
                                 <select th:class="${#fields.hasErrors('time')} ? 'celect-control is-invalid'" th:field="*{time}" multiple="multiple">

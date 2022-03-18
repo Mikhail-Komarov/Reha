@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <title>Patients</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -9,8 +10,9 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <img src="https://banner2.cleanpng.com/20190611/lpa/kisspng-logo-portable-network-graphics-image-brand-r-png-sorgusuna-uygun-resimleri-bedava-indir-5d0027f9775ea4.2689206515602913214889.jpg" alt=""  height="30">
-        <div class="container-fluid">
+    <img src="https://banner2.cleanpng.com/20190611/lpa/kisspng-logo-portable-network-graphics-image-brand-r-png-sorgusuna-uygun-resimleri-bedava-indir-5d0027f9775ea4.2689206515602913214889.jpg"
+         alt="" height="30">
+    <div class="container-fluid">
         <a class="navbar-brand" href="/patient">Patients</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -76,11 +78,11 @@
             </thead>
             <tbody>
             <tr th:each="patient: ${patients}" th:onclick="|rowClicked('${patient.getId()}');|">
-                <td th:text="${patient.id}"/>
-                <td th:text="${patient.firstName}"/>
-                <td th:text="${patient.lastName}"/>
-                <td th:text="${patient.healthInsurance}"/>
-                <td th:text="${patient.status}"/>
+                <td th:text="${patient.id}"></td>
+                <td th:text="${patient.firstName}"></td>
+                <td th:text="${patient.lastName}"></td>
+                <td th:text="${patient.healthInsurance}"></td>
+                <td th:text="${patient.status}"></td>
             </tr>
             </tbody>
         </table>
@@ -89,7 +91,7 @@
 </body>
 <script>
     function rowClicked(value) {
-        location.href = "patient/" + value + "/prescription/";
+        location.href = "/patient/" + value + "/prescription/";
     }
 </script>
 </html>

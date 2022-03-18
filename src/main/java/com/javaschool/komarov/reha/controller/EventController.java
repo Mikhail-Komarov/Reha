@@ -36,10 +36,12 @@ public class EventController {
 
     @PostMapping("/event/update")
     @PreAuthorize("hasAnyAuthority('employee:read')")
-    public String updatePatientStatus(@ModelAttribute("newEvent") EventDto eventDto, BindingResult bindingResult) {
+    public String updatePatientStatus(@ModelAttribute("newEvent") EventDto eventDto, BindingResult bindingResult, Model model) {
 
         validationService.checkEventStatus(eventDto, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("hasError", true);
+            model.addAttribute("error", "Error in event id:" + eventDto.getId());
             return "event";
         } else {
             eventService.updateEventStatus(eventDto);

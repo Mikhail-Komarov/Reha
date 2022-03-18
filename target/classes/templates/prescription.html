@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <title>Prescription</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -36,10 +37,10 @@
     <img src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
     <div class="card-body">
         <h5 class="card-title">Patient's info:</h5>
-        <p class="card-text" th:text="'First name: '+ *{firstName}"/>
-        <p class="card-text" th:text="'Last name: '+ *{lastName}"/>
-        <p class="card-text" th:text="'Insurance number: '+ *{healthInsurance}"/>
-        <p class="card-text" th:text="'Status: '+ *{status}"/>
+        <p class="card-text" th:text="'First name: '+ *{firstName}"></p>
+        <p class="card-text" th:text="'Last name: '+ *{lastName}"></p>
+        <p class="card-text" th:text="'Insurance number: '+ *{healthInsurance}"></p>
+        <p class="card-text" th:text="'Status: '+ *{status}"></p>
         <div>
             <div sec:authorize="hasAnyAuthority('employee:write')">
                 <form name="status" th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/update'}" th:object="${updatedPatient}">
@@ -48,7 +49,7 @@
                         <option value="DISCHARGED">Discharged</option>
                     </select>
                     <br>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{status}"/>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{status}"></div>
                     <button class="btn btn-outline-dark" type="submit">Change status</button>
                 </form>
             </div>
@@ -59,12 +60,12 @@
     <div sec:authorize="hasAnyAuthority('employee:write')">
         <form th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/add'}" th:object="${newPrescription}">
             <div class="col-md-6">
-            <label for="validationDiagnosis" class="form-label"></label>
-            <input th:class="${#fields.hasErrors('diagnosis')} ? 'form-control is-invalid'"
-                   type="text" th:field="*{diagnosis}" placeholder="diagnosis" title="maximum of 60 characters"
-                   id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" required>
-            <div id="validationDiagnosisFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{diagnosis}"></div>
-            <button class="btn btn-outline-dark" type="submit">Add diagnosis</button>
+                <label for="validationDiagnosis" class="form-label"></label>
+                <input th:class="${#fields.hasErrors('diagnosis')} ? 'form-control is-invalid'"
+                       type="text" th:field="*{diagnosis}" placeholder="diagnosis" title="maximum of 60 characters"
+                       id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" required>
+                <div id="validationDiagnosisFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{diagnosis}"></div>
+                <button class="btn btn-outline-dark" type="submit">Add diagnosis</button>
             </div>
         </form>
     </div>
@@ -81,9 +82,9 @@
             <tbody>
             <tr th:each="prescription: ${prescriptions}"
                 th:onclick="|rowClicked('${patientInfo.id}', '${prescription.id}');|">
-                <td th:text="${prescription.id}"/>
-                <td th:text="${prescription.diagnosis}"/>
-                <td th:text="${prescription.getEmployee().firstName} + ' ' + ${prescription.getEmployee().firstName}"/>
+                <td th:text="${prescription.id}"></td>
+                <td th:text="${prescription.diagnosis}"></td>
+                <td th:text="${prescription.getEmployee().firstName} + ' ' + ${prescription.getEmployee().firstName}"></td>
             </tr>
             </tbody>
         </table>

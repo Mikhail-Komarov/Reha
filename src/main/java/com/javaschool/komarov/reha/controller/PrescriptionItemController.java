@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -101,10 +102,12 @@ public class PrescriptionItemController {
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String addPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("newItem") PrescriptionItemDto prescriptionItemDto,
-                                  BindingResult bindingResult) {
+                                  BindingResult bindingResult, Model model) {
         prescriptionItemDto.setId(null);
         validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("hasError", true);
+            model.addAttribute("error", "Adding error!");
             return "item";
         } else {
             prescriptionItemService.savePrescriptionItem(prescriptionItemDto);
@@ -116,10 +119,12 @@ public class PrescriptionItemController {
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String updPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("updateItem") PrescriptionItemDto prescriptionItemDto,
-                                  BindingResult bindingResult) {
+                                  BindingResult bindingResult, Model model) {
         validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         validationService.checkPatternUpdate(prescriptionItemDto, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("hasError", true);
+            model.addAttribute("error", "Error in item id:" + prescriptionItemDto.getId());
             return "item";
         } else {
             prescriptionItemService.updatePrescriptionItem(prescriptionItemDto);
