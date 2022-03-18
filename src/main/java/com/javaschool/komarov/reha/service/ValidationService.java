@@ -16,7 +16,6 @@ import org.springframework.validation.FieldError;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -163,7 +162,7 @@ public class ValidationService {
         }
 
         if (oldItem == null && dose == null && therapy != null && !therapy.getTherapyType().equals(TherapyType.PROCEDURE)) {
-            bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
+            bindingResult.addError(new FieldError("newItem", "dose", "Set the dose"));
         }
 
         if (therapy != null && oldItem == null) {
@@ -223,7 +222,7 @@ public class ValidationService {
         int numberOfDays = prescriptionItemDto.getDate().size();
         int perDay = prescriptionItemDto.getTime().size();
 
-        List<LocalDateTime> newEventDateList = new ArrayList<>();
+        List<LocalDateTime> newEventDateList = prescriptionItemService.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
 
         if (numberOfDays * perDay > 0
                 && prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.PRESCRIBED)) {

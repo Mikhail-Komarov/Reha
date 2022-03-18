@@ -95,6 +95,7 @@ public class EventService {
 
     public void updateEventStatus(Long id, String cancellationReason) {
         Set<Event> events = eventRepo.findActiveEventByPrescriptionItemId(id);
+        System.out.println(events);
         if (!events.isEmpty()) {
             for (Event event : events) {
                 if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
