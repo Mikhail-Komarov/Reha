@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class PrescriptionService {
     private final PrescriptionMapper prescriptionMapper;
@@ -34,15 +32,19 @@ public class PrescriptionService {
 
     public void savePrescription(PrescriptionDto prescriptionDto, UserDetails userDetails, Long patientId) {
 
-        Optional<EmployeeDto> employee = employeeService.getEmployeeByLogin(userDetails.getUsername());
-        PatientDto patientDto = patientService.getPatientById(patientId).get();
-        prescriptionDto.setEmployee(employee.get());
+        EmployeeDto employee = employeeService.getEmployeeByLogin(userDetails.getUsername());
+        PatientDto patientDto = patientService.getPatientById(patientId);
+        prescriptionDto.setEmployee(employee);
         prescriptionDto.setPatient(patientDto);
         prescriptionRepo.save(prescriptionMapper.toModel(prescriptionDto));
     }
 
-    public Optional<PrescriptionDto> getPrescriptionById(Long id) {
-        return Optional.of(prescriptionMapper.toDTO(prescriptionRepo.findById(id).get()));
+    public PrescriptionDto getPrescriptionById(Long id) {
+        if (prescriptionRepo.findById(id).isPresent()) {
+            return prescriptionMapper.toDTO(prescriptionRepo.findById(id).get());
+        } else {
+            return null;
+        }
     }
 
 }

@@ -6,7 +6,6 @@ import com.javaschool.komarov.reha.model.PatientStatus;
 import com.javaschool.komarov.reha.repository.PatientRepo;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -32,8 +31,11 @@ public class PatientService {
         return patientMapper.toDTOList(patientRepo.findAll());
     }
 
-    public Optional<PatientDto> getPatientById(Long id) {
-        return Optional.of(patientMapper.toDTO(patientRepo.findById(id).get()));
+    public PatientDto getPatientById(Long id) {
+        if (patientRepo.findById(id).isPresent()) {
+            return patientMapper.toDTO(patientRepo.findById(id).get());
+        }
+        else return null;
     }
 
     public void updatePatientStatus(PatientDto patientDto) {

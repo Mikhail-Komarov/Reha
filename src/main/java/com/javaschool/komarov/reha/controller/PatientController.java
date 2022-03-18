@@ -10,7 +10,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequestMapping("/patient")
 @Controller
 public class PatientController {
     private final PatientService patientService;
@@ -26,14 +28,14 @@ public class PatientController {
         return patientService.getAllPatients();
     }
 
-    @GetMapping("/patient")
+    @GetMapping("")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String main(Model model) {
         model.addAttribute("newPatient", new PatientDto());
         return "patient";
     }
 
-    @PostMapping("/patient/new")
+    @PostMapping("/new")
     @PreAuthorize("hasAnyAuthority('employee:write')")
     public String addPatient(@ModelAttribute("newPatient") PatientDto patientDto, BindingResult bindingResult) {
         validationService.checkPatient(patientDto, bindingResult);

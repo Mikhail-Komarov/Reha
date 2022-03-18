@@ -74,8 +74,8 @@ public class PrescriptionItemService {
 
     public void savePrescriptionItem(PrescriptionItemDto prescriptionItemDto) {
 
-        LocalDate maxEventDate = prescriptionItemDto.getDat().stream().max(Comparator.naturalOrder()).orElseThrow(NullPointerException::new);
-        LocalDate minEventDate = prescriptionItemDto.getDat().stream().min(Comparator.naturalOrder()).orElseThrow(NullPointerException::new);
+        LocalDate maxEventDate = prescriptionItemDto.getDate().stream().max(Comparator.naturalOrder()).orElseThrow(NullPointerException::new);
+        LocalDate minEventDate = prescriptionItemDto.getDate().stream().min(Comparator.naturalOrder()).orElseThrow(NullPointerException::new);
 
         if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
                 || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
@@ -87,19 +87,19 @@ public class PrescriptionItemService {
 
         prescriptionItemDto.setEmployee(employeeService.getEmployeeDtoById(prescriptionItemDto.getEmployeeId()));
         prescriptionItemDto.setTherapy(therapyService.getTherapyDtoById(prescriptionItemDto.getTherapyId()));
-        prescriptionItemDto.setPrescription(prescriptionService.getPrescriptionById(prescriptionItemDto.getPrescriptionId()).get());
+        prescriptionItemDto.setPrescription(prescriptionService.getPrescriptionById(prescriptionItemDto.getPrescriptionId()));
         prescriptionItemDto.setPrescriptionItemStatus(PrescriptionItemStatus.PRESCRIBED);
 
-        int numberOfDays = prescriptionItemDto.getDat().size();
-        int perDay = prescriptionItemDto.getTim().size();
+        int numberOfDays = prescriptionItemDto.getDate().size();
+        int perDay = prescriptionItemDto.getTime().size();
 
         List<LocalDateTime> dateTimeListForEvents = new ArrayList<>();
         Set<String> daysOfWeek = new HashSet<>();
 
         for (int i = 0; i < numberOfDays; i++) {
             for (int j = 0; j < perDay; j++) {
-                dateTimeListForEvents.add(prescriptionItemDto.getDat().get(i).atTime(prescriptionItemDto.getTim().get(j)));
-                daysOfWeek.add(prescriptionItemDto.getDat().get(i).getDayOfWeek().name());
+                dateTimeListForEvents.add(prescriptionItemDto.getDate().get(i).atTime(prescriptionItemDto.getTime().get(j)));
+                daysOfWeek.add(prescriptionItemDto.getDate().get(i).getDayOfWeek().name());
             }
         }
         prescriptionItemDto.setTimePattern(createDateAndTimePattern(perDay, numberOfDays, daysOfWeek));
@@ -109,7 +109,11 @@ public class PrescriptionItemService {
     }
 
     public void updatePrescriptionItem(PrescriptionItemDto prescriptionItemDto) {
-        PrescriptionItem prescriptionItem = prescriptionItemRepo.findById(prescriptionItemDto.getId()).get();
+        PrescriptionItem prescriptionItem = null;
+        if (prescriptionItemRepo.findById(prescriptionItemDto.getId()).isPresent()) {
+            prescriptionItem = prescriptionItemRepo.findById(prescriptionItemDto.getId()).get();
+        }
+        assert prescriptionItem != null;
         PrescriptionItemStatus prescriptionItemStatus = prescriptionItem.getPrescriptionItemStatus();
         if (prescriptionItemDto.getPrescriptionItemStatus() != null) {
             prescriptionItemStatus = prescriptionItemDto.getPrescriptionItemStatus();
@@ -147,8 +151,8 @@ public class PrescriptionItemService {
                 .filter(p -> p.getEventStatus().equals(EventStatus.COMPLETED))
                 .map(EventDto::getDateTime).collect(Collectors.toList());
 
-        int numberOfDays = prescriptionItemDto.getDat().size();
-        int perDay = prescriptionItemDto.getTim().size();
+        int numberOfDays = prescriptionItemDto.getDate().size();
+        int perDay = prescriptionItemDto.getTime().size();
 
         List<LocalDateTime> newEventDateList = new ArrayList<>();
         Set<String> daysOfWeek = new HashSet<>();
@@ -159,9 +163,9 @@ public class PrescriptionItemService {
             for (int i = 0; i < numberOfDays; i++) {
                 for (int j = 0; j < perDay; j++) {
                     newEventDateList.add(prescriptionItemDto
-                            .getDat().get(i)
-                            .atTime(prescriptionItemDto.getTim().get(j)));
-                    daysOfWeek.add(prescriptionItemDto.getDat().get(i).getDayOfWeek().name());
+                            .getDate().get(i)
+                            .atTime(prescriptionItemDto.getTime().get(j)));
+                    daysOfWeek.add(prescriptionItemDto.getDate().get(i).getDayOfWeek().name());
                 }
             }
 
@@ -240,9 +244,8 @@ public class PrescriptionItemService {
     }
 
     public String createDateAndTimePattern(int perDay, int numberOfDays, Set<String> daysOfWeek) {
-        String pattern = (perDay + "time(s) per day, " + numberOfDays + " days, "
+        return (perDay + "time(s) per day, " + numberOfDays + " days, "
                 + daysOfWeek);
-        return pattern;
 
     }
 

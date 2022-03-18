@@ -3,6 +3,7 @@ package com.javaschool.komarov.reha.mapper;
 import com.javaschool.komarov.reha.dto.PrescriptionItemDto;
 import com.javaschool.komarov.reha.model.PrescriptionItem;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper
 public interface PrescriptionItemMapper {

@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,7 +31,7 @@ public class PrescriptionController {
 
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
-        return patientService.getPatientById(id).get();
+        return patientService.getPatientById(id);
     }
 
     @ModelAttribute("updatedPatient")
@@ -52,7 +51,7 @@ public class PrescriptionController {
 
     @GetMapping("/prescription")
     @PreAuthorize("hasAnyAuthority('employee:read')")
-    public String prescription(@PathVariable("id") long id) {
+    public String prescription() {
         return "prescription";
     }
 
@@ -61,7 +60,7 @@ public class PrescriptionController {
     public String addPrescription(@PathVariable("id") long id, @AuthenticationPrincipal UserDetails userDetails,
                                   @ModelAttribute("newPrescription") PrescriptionDto prescriptionDto,
                                   BindingResult bindingResult) {
-        prescriptionDto.setId(null); // !!!!! Wtf ?
+        prescriptionDto.setId(null);
         validationService.checkPrescription(prescriptionDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "prescription";

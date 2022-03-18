@@ -48,12 +48,12 @@ public class PrescriptionItemController {
 
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
-        return patientService.getPatientById(id).get();
+        return patientService.getPatientById(id);
     }
 
     @ModelAttribute("prescriptionInfo")
     public PrescriptionDto prescriptionInfo(@PathVariable("num") long num) {
-        return prescriptionService.getPrescriptionById(num).get();
+        return prescriptionService.getPrescriptionById(num);
     }
 
     @ModelAttribute("items")
@@ -63,7 +63,7 @@ public class PrescriptionItemController {
 
     @ModelAttribute("doctor")
     public EmployeeDto doctor(@AuthenticationPrincipal UserDetails userDetails) {
-        return employeeService.getEmployeeByLogin(userDetails.getUsername()).get();
+        return employeeService.getEmployeeByLogin(userDetails.getUsername());
     }
 
     @ModelAttribute("newItem")
@@ -93,7 +93,7 @@ public class PrescriptionItemController {
 
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('employee:read')")
-    public String prescription(@PathVariable String id, @PathVariable String num) {
+    public String prescription() {
         return "item";
     }
 
@@ -118,8 +118,6 @@ public class PrescriptionItemController {
                                   @ModelAttribute("updateItem") PrescriptionItemDto prescriptionItemDto,
                                   BindingResult bindingResult) {
         validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
-
-
         validationService.checkPatternUpdate(prescriptionItemDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "item";

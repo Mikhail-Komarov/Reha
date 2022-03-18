@@ -119,8 +119,8 @@ public class ValidationService {
         Integer dose = prescriptionItemDto.getDose();
         LocalDate startTreatment = prescriptionItemDto.getStartTreatment();
         LocalDate endTreatment = prescriptionItemDto.getEndTreatment();
-        List<LocalDate> dat = prescriptionItemDto.getDat();
-        List<LocalTime> tim = prescriptionItemDto.getTim();
+        List<LocalDate> dat = prescriptionItemDto.getDate();
+        List<LocalTime> tim = prescriptionItemDto.getTime();
         PrescriptionItemStatus prescriptionItemStatus = prescriptionItemDto.getPrescriptionItemStatus();
         String cancellationReason = prescriptionItemDto.getCancellationReason();
         long therapyId = prescriptionItemDto.getTherapyId();
@@ -140,13 +140,18 @@ public class ValidationService {
             }
         }
 
-        LocalDate maxEventDate = null;
-        LocalDate minEventDate = null;
+        LocalDate maxEventDate;
+        LocalDate minEventDate;
 
         if (dat != null && oldItem == null) {
-            maxEventDate = prescriptionItemDto.getDat().stream().max(Comparator.naturalOrder()).get();
-            minEventDate = prescriptionItemDto.getDat().stream().min(Comparator.naturalOrder()).get();
-
+            if (prescriptionItemDto.getDate().stream().max(Comparator.naturalOrder()).isPresent()
+                    && prescriptionItemDto.getDate().stream().min(Comparator.naturalOrder()).isPresent()) {
+                maxEventDate = prescriptionItemDto.getDate().stream().max(Comparator.naturalOrder()).get();
+                minEventDate = prescriptionItemDto.getDate().stream().min(Comparator.naturalOrder()).get();
+            } else {
+                maxEventDate = LocalDate.now();
+                minEventDate = LocalDate.now();
+            }
             if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
                     || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
                     || prescriptionItemDto.getStartTreatment().isAfter(minEventDate)
@@ -157,7 +162,7 @@ public class ValidationService {
             }
         }
 
-        if (oldItem == null && dose == null && !therapy.getTherapyType().equals(TherapyType.PROCEDURE)) {
+        if (oldItem == null && dose == null && therapy != null && !therapy.getTherapyType().equals(TherapyType.PROCEDURE)) {
             bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
         }
 
@@ -169,7 +174,7 @@ public class ValidationService {
                 bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
             }
         }
-        //!!Nullp
+
         if (oldItem != null) {
             if ((dose != null) && !oldItem.getTherapy().getTherapyType().equals(TherapyType.MEDICINE)) {
                 bindingResult.addError(new FieldError("updateItem", "dose", "Dose available only for medicines"));
@@ -185,7 +190,7 @@ public class ValidationService {
 
         if (prescriptionItemStatus != null && oldItem == null) {
             if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)
-                    && (dose != 0 || startTreatment != null || endTreatment != null
+                    && (dose != null || startTreatment != null || endTreatment != null
                     || dat != null || tim != null || therapy != null)) {
                 bindingResult.addError(new FieldError("newItem", "prescriptionItemStatus", "Only the reason for cancellation field is available for this status"));
             }
@@ -215,8 +220,8 @@ public class ValidationService {
                 .filter(p -> p.getEventStatus().equals(EventStatus.COMPLETED))
                 .map(EventDto::getDateTime).collect(Collectors.toList());
 
-        int numberOfDays = prescriptionItemDto.getDat().size();
-        int perDay = prescriptionItemDto.getTim().size();
+        int numberOfDays = prescriptionItemDto.getDate().size();
+        int perDay = prescriptionItemDto.getTime().size();
 
         List<LocalDateTime> newEventDateList = new ArrayList<>();
 
@@ -226,8 +231,8 @@ public class ValidationService {
             for (int i = 0; i < numberOfDays; i++) {
                 for (int j = 0; j < perDay; j++) {
                     newEventDateList.add(prescriptionItemDto
-                            .getDat().get(i)
-                            .atTime(prescriptionItemDto.getTim().get(j)));
+                            .getDate().get(i)
+                            .atTime(prescriptionItemDto.getTime().get(j)));
                 }
             }
         }

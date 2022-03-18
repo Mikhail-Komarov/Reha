@@ -20,6 +20,10 @@ public class TherapyService {
     }
 
     public TherapyDto getTherapyDtoById(Long id) {
-        return therapyMapper.toDTO(therapyRepo.findById(id).get());
+        if (therapyRepo.findById(id).isPresent()) {
+            return therapyMapper.toDTO(therapyRepo.findById(id).get());
+        } else {
+            return null;
+        }
     }
 }

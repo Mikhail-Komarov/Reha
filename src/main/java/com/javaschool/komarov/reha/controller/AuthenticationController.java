@@ -19,10 +19,21 @@ public class AuthenticationController {
     @GetMapping
     public String login(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
-            EmployeeDto employeeDto = employeeService.getEmployeeByLogin(userDetails.getUsername()).get();
+            EmployeeDto employeeDto = employeeService.getEmployeeByLogin(userDetails.getUsername());
             model.addAttribute("employeeName", employeeDto.getFirstName());
             model.addAttribute("employeeLastName", employeeDto.getLastName());
         }
+        return "login";
+    }
+
+    @GetMapping("/login-error.html")
+    public String loginError(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            EmployeeDto employeeDto = employeeService.getEmployeeByLogin(userDetails.getUsername());
+            model.addAttribute("employeeName", employeeDto.getFirstName());
+            model.addAttribute("employeeLastName", employeeDto.getLastName());
+        }
+        model.addAttribute("loginError", true);
         return "login";
     }
 }

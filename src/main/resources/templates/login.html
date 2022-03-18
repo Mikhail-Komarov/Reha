@@ -14,7 +14,7 @@
                 <div class="card rounded-3">
                     <div class="card-body p-4 p-md-5">
                         <h2 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Please log in</h2>
-
+                        <h3 style="color: red" th:if="${loginError}" class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Wrong user or password!</h3>
                         <form class="form-signin" method="post" action="/">
                             <p>
                                 <label for="username">Username</label>

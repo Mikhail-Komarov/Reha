@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-03-16T23:16:09+0300",
+    date = "2022-03-18T15:36:14+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_312 (BellSoft)"
 )
 @Component
@@ -53,20 +53,6 @@ public class TherapyMapperImpl implements TherapyMapper {
         ArrayList<TherapyDto> iterable = new ArrayList<TherapyDto>();
         for ( Therapy therapy : models ) {
             iterable.add( toDTO( therapy ) );
-        }
-
-        return iterable;
-    }
-
-    @Override
-    public Iterable<Therapy> toModelList(Iterable<TherapyDto> dtos) {
-        if ( dtos == null ) {
-            return null;
-        }
-
-        ArrayList<Therapy> iterable = new ArrayList<Therapy>();
-        for ( TherapyDto therapyDto : dtos ) {
-            iterable.add( toModel( therapyDto ) );
         }
 
         return iterable;
