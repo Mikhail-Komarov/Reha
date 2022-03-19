@@ -5,9 +5,13 @@ import com.javaschool.komarov.reha.model.PrescriptionItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(uses = PrescriptionMapper.class)
 public interface PrescriptionItemMapper {
+    @Mapping(target = "itemId", source = "model.id")
     PrescriptionItemDto toDTO(PrescriptionItem model);
+
+    @Mapping(target = "id", source = "dto.itemId")
     PrescriptionItem toModel(PrescriptionItemDto dto);
+
     Iterable<PrescriptionItemDto> toDTOList(Iterable<PrescriptionItem> models);
 }

@@ -2,21 +2,19 @@ package com.javaschool.komarov.reha.dto;
 
 import com.javaschool.komarov.reha.model.PrescriptionItemStatus;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrescriptionItemDto {
-    private Long id;
+    private Long itemId;
     private Integer dose;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startTreatment;
@@ -36,39 +34,4 @@ public class PrescriptionItemDto {
     private long therapyId;
     private long prescriptionId;
 
-    public PrescriptionItemDto(Integer dose, LocalDate startTreatment, LocalDate endTreatment, String timePattern, PrescriptionItemStatus prescriptionItemStatus,
-                               String cancellationReason, EmployeeDto employee, TherapyDto therapy, PrescriptionDto prescription) {
-        this.dose = dose;
-        this.startTreatment = startTreatment;
-        this.endTreatment = endTreatment;
-        this.timePattern = timePattern;
-        this.prescriptionItemStatus = prescriptionItemStatus;
-        this.cancellationReason = cancellationReason;
-        this.employee = employee;
-        this.therapy = therapy;
-        this.prescription = prescription;
-    }
-
-    public PrescriptionItemDto(LocalDate startTreatment, LocalDate endTreatment, String timePattern, PrescriptionItemStatus prescriptionItemStatus,
-                               String cancellationReason, EmployeeDto employee, TherapyDto therapy, PrescriptionDto prescription) {
-        this.startTreatment = startTreatment;
-        this.endTreatment = endTreatment;
-        this.timePattern = timePattern;
-        this.prescriptionItemStatus = prescriptionItemStatus;
-        this.cancellationReason = cancellationReason;
-        this.employee = employee;
-        this.therapy = therapy;
-        this.prescription = prescription;
-    }
-
-    public PrescriptionItemDto(LocalDate startTreatment, LocalDate endTreatment, String timePattern, PrescriptionItemStatus prescriptionItemStatus,
-                               EmployeeDto employee, TherapyDto therapy, PrescriptionDto prescription) {
-        this.startTreatment = startTreatment;
-        this.endTreatment = endTreatment;
-        this.timePattern = timePattern;
-        this.prescriptionItemStatus = prescriptionItemStatus;
-        this.employee = employee;
-        this.therapy = therapy;
-        this.prescription = prescription;
-    }
 }

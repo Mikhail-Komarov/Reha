@@ -74,8 +74,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item: ${items}" data-toggle="modal" data-target="#updModal" th:onclick="'javascript:Values('+${item.id}+')'">
-                <td th:text="${item.id}"></td>
+            <tr th:each="item: ${items}" data-toggle="modal" data-target="#updModal" th:onclick="'javascript:Values('+${item.itemId}+')'">
+                <td th:text="${item.itemId}"></td>
                 <td th:text="${item.therapy.name}"></td>
                 <td th:text="${item.dose}"></td>
                 <td th:text="${item.timePattern}"></td>
@@ -101,7 +101,7 @@
             <div class="modal-body">
                 <div sec:authorize="hasAnyAuthority('employee:write')">
                     <form th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/'+
-                                        ${prescriptionInfo.id} +'/add'}"
+                                        ${prescriptionInfo.prescriptionId} +'/add'}"
                           th:object="${newItem}">
 
                         <label for="validationDose" class="col-form-label">Dose:</label>
@@ -123,7 +123,7 @@
                                id="validationEnd" aria-describedby="validationEndFeedback" required/>
                         <div id="validationEndFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{endTreatment}"></div>
                         <input type="hidden" id="employeeId" th:name="employeeId" th:value="${doctor.id}"/>
-                        <input type="hidden" id="prescriptionId" th:name="prescriptionId" th:value="${prescriptionInfo.id}"/>
+                        <input type="hidden" id="prescriptionId" th:name="prescriptionId" th:value="${prescriptionInfo.prescriptionId}"/>
                         <br>
                         <label class="col-form-label">Therapy:</label>
                         <select th:class="${#fields.hasErrors('therapyId')} ? 'celect-control is-invalid'" th:field="*{therapyId}" th:name="therapyId">
@@ -147,7 +147,7 @@
                             </div>
                             <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"></div>
                             <br>
-                            <div class="">
+                            <div>
                                 <strong>Select time:</strong>
                                 <select th:class="${#fields.hasErrors('time')} ? 'celect-control is-invalid'" th:field="*{time}" multiple="multiple">
                                     <option th:each="time : ${timeList}"
@@ -180,7 +180,7 @@
             <div class="modal-body">
                 <div sec:authorize="hasAnyAuthority('employee:write')">
                     <form th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/'+
-                                        ${prescriptionInfo.id} +'/upd'}"
+                                        ${prescriptionInfo.prescriptionId} +'/upd'}"
                           th:object="${updateItem}">
                         <label class="col-form-label">Status:</label>
                         <select th:class="${#fields.hasErrors('prescriptionItemStatus')} ? 'celect-control is-invalid'" th:field="*{prescriptionItemStatus}"
@@ -199,7 +199,7 @@
                         <div id="validationReasonFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error"
                              th:errors="*{cancellationReason}"></div>
 
-                        <input id="id" name="id" type="hidden" value=""/>
+                        <input id="id" name="itemId" type="hidden" value=""/>
 
                         <label for="validationDoseUpd" class="col-form-label">Dose:</label>
                         <input th:class="${#fields.hasErrors('dose')} ? 'form-control is-invalid'"

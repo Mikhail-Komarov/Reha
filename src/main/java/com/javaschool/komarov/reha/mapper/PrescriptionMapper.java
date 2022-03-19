@@ -7,8 +7,12 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface PrescriptionMapper {
+    @Mapping(target = "prescriptionId", source = "model.id")
     PrescriptionDto toDTO(Prescription model);
+
+    @Mapping(target = "id", source = "dto.prescriptionId")
     Prescription toModel(PrescriptionDto dto);
+
     Iterable<PrescriptionDto> toDTOList(Iterable<Prescription> models);
 
 }

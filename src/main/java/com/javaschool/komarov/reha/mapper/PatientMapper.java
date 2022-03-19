@@ -8,7 +8,10 @@ import org.mapstruct.Mapper;
 public interface PatientMapper {
 
     PatientDto toDTO(Patient model);
+
     Patient toModel(PatientDto dto);
+
     Iterable<Patient> toModelList(Iterable<PatientDto> dtos);
+
     Iterable<PatientDto> toDTOList(Iterable<Patient> models);
 }

@@ -1,8 +1,8 @@
 package com.javaschool.komarov.reha.model;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +17,8 @@ import java.util.Set;
 
 
 @Entity
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "therapy")
 public class Therapy {
@@ -33,22 +33,5 @@ public class Therapy {
     @OneToMany(mappedBy = "therapy")
     private Set<PrescriptionItem> prescriptionItems;
 
-    public Therapy(Long id, String name, TherapyType therapyType, Set<PrescriptionItem> prescriptionItems) {
-        this.id = id;
-        this.name = name;
-        this.therapyType = therapyType;
-        this.prescriptionItems = prescriptionItems;
-    }
-
-    public Therapy(String name, TherapyType therapyType, Set<PrescriptionItem> prescriptionItems) {
-        this.name = name;
-        this.therapyType = therapyType;
-        this.prescriptionItems = prescriptionItems;
-    }
-
-    public Therapy(String name, TherapyType therapyType) {
-        this.name = name;
-        this.therapyType = therapyType;
-    }
 }
 

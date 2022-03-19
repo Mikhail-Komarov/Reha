@@ -81,8 +81,8 @@
             </thead>
             <tbody>
             <tr th:each="prescription: ${prescriptions}"
-                th:onclick="|rowClicked('${patientInfo.id}', '${prescription.id}');|">
-                <td th:text="${prescription.id}"></td>
+                th:onclick="|rowClicked('${patientInfo.id}', '${prescription.prescriptionId}');|">
+                <td th:text="${prescription.prescriptionId}"></td>
                 <td th:text="${prescription.diagnosis}"></td>
                 <td th:text="${prescription.getEmployee().firstName} + ' ' + ${prescription.getEmployee().firstName}"></td>
             </tr>

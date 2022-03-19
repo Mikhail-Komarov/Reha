@@ -1,26 +1,26 @@
 package com.javaschool.komarov.reha.mapper;
 
 import com.javaschool.komarov.reha.dto.EmployeeDto;
-import com.javaschool.komarov.reha.dto.PatientDto;
-import com.javaschool.komarov.reha.dto.PrescriptionDto;
 import com.javaschool.komarov.reha.dto.PrescriptionItemDto;
 import com.javaschool.komarov.reha.dto.TherapyDto;
 import com.javaschool.komarov.reha.model.Employee;
-import com.javaschool.komarov.reha.model.Patient;
-import com.javaschool.komarov.reha.model.Prescription;
 import com.javaschool.komarov.reha.model.PrescriptionItem;
 import com.javaschool.komarov.reha.model.Therapy;
 import java.util.ArrayList;
 import javax.annotation.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-03-18T21:16:41+0300",
+    date = "2022-03-19T18:26:17+0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_312 (BellSoft)"
 )
 @Component
 public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
+
+    @Autowired
+    private PrescriptionMapper prescriptionMapper;
 
     @Override
     public PrescriptionItemDto toDTO(PrescriptionItem model) {
@@ -30,7 +30,7 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
 
         PrescriptionItemDto prescriptionItemDto = new PrescriptionItemDto();
 
-        prescriptionItemDto.setId( model.getId() );
+        prescriptionItemDto.setItemId( model.getId() );
         prescriptionItemDto.setDose( model.getDose() );
         prescriptionItemDto.setStartTreatment( model.getStartTreatment() );
         prescriptionItemDto.setEndTreatment( model.getEndTreatment() );
@@ -39,7 +39,7 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
         prescriptionItemDto.setCancellationReason( model.getCancellationReason() );
         prescriptionItemDto.setEmployee( employeeToEmployeeDto( model.getEmployee() ) );
         prescriptionItemDto.setTherapy( therapyToTherapyDto( model.getTherapy() ) );
-        prescriptionItemDto.setPrescription( prescriptionToPrescriptionDto( model.getPrescription() ) );
+        prescriptionItemDto.setPrescription( prescriptionMapper.toDTO( model.getPrescription() ) );
 
         return prescriptionItemDto;
     }
@@ -52,12 +52,12 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
 
         PrescriptionItem prescriptionItem = new PrescriptionItem();
 
-        prescriptionItem.setId( dto.getId() );
+        prescriptionItem.setId( dto.getItemId() );
         prescriptionItem.setDose( dto.getDose() );
         prescriptionItem.setStartTreatment( dto.getStartTreatment() );
         prescriptionItem.setEndTreatment( dto.getEndTreatment() );
         prescriptionItem.setTimePattern( dto.getTimePattern() );
-        prescriptionItem.setPrescription( prescriptionDtoToPrescription( dto.getPrescription() ) );
+        prescriptionItem.setPrescription( prescriptionMapper.toModel( dto.getPrescription() ) );
         prescriptionItem.setTherapy( therapyDtoToTherapy( dto.getTherapy() ) );
         prescriptionItem.setEmployee( employeeDtoToEmployee( dto.getEmployee() ) );
         prescriptionItem.setPrescriptionItemStatus( dto.getPrescriptionItemStatus() );
@@ -111,51 +111,18 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
         return therapyDto;
     }
 
-    protected PatientDto patientToPatientDto(Patient patient) {
-        if ( patient == null ) {
+    protected Therapy therapyDtoToTherapy(TherapyDto therapyDto) {
+        if ( therapyDto == null ) {
             return null;
         }
 
-        PatientDto patientDto = new PatientDto();
+        Therapy therapy = new Therapy();
 
-        patientDto.setId( patient.getId() );
-        patientDto.setFirstName( patient.getFirstName() );
-        patientDto.setLastName( patient.getLastName() );
-        patientDto.setHealthInsurance( patient.getHealthInsurance() );
-        patientDto.setStatus( patient.getStatus() );
+        therapy.setId( therapyDto.getId() );
+        therapy.setName( therapyDto.getName() );
+        therapy.setTherapyType( therapyDto.getTherapyType() );
 
-        return patientDto;
-    }
-
-    protected PrescriptionDto prescriptionToPrescriptionDto(Prescription prescription) {
-        if ( prescription == null ) {
-            return null;
-        }
-
-        PrescriptionDto prescriptionDto = new PrescriptionDto();
-
-        prescriptionDto.setId( prescription.getId() );
-        prescriptionDto.setDiagnosis( prescription.getDiagnosis() );
-        prescriptionDto.setPatient( patientToPatientDto( prescription.getPatient() ) );
-        prescriptionDto.setEmployee( employeeToEmployeeDto( prescription.getEmployee() ) );
-
-        return prescriptionDto;
-    }
-
-    protected Patient patientDtoToPatient(PatientDto patientDto) {
-        if ( patientDto == null ) {
-            return null;
-        }
-
-        Patient patient = new Patient();
-
-        patient.setId( patientDto.getId() );
-        patient.setFirstName( patientDto.getFirstName() );
-        patient.setLastName( patientDto.getLastName() );
-        patient.setHealthInsurance( patientDto.getHealthInsurance() );
-        patient.setStatus( patientDto.getStatus() );
-
-        return patient;
+        return therapy;
     }
 
     protected Employee employeeDtoToEmployee(EmployeeDto employeeDto) {
@@ -173,34 +140,5 @@ public class PrescriptionItemMapperImpl implements PrescriptionItemMapper {
         employee.setRole( employeeDto.getRole() );
 
         return employee;
-    }
-
-    protected Prescription prescriptionDtoToPrescription(PrescriptionDto prescriptionDto) {
-        if ( prescriptionDto == null ) {
-            return null;
-        }
-
-        Prescription prescription = new Prescription();
-
-        prescription.setId( prescriptionDto.getId() );
-        prescription.setDiagnosis( prescriptionDto.getDiagnosis() );
-        prescription.setPatient( patientDtoToPatient( prescriptionDto.getPatient() ) );
-        prescription.setEmployee( employeeDtoToEmployee( prescriptionDto.getEmployee() ) );
-
-        return prescription;
-    }
-
-    protected Therapy therapyDtoToTherapy(TherapyDto therapyDto) {
-        if ( therapyDto == null ) {
-            return null;
-        }
-
-        Therapy therapy = new Therapy();
-
-        therapy.setId( therapyDto.getId() );
-        therapy.setName( therapyDto.getName() );
-        therapy.setTherapyType( therapyDto.getTherapyType() );
-
-        return therapy;
     }
 }

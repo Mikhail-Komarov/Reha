@@ -59,7 +59,7 @@ public class PrescriptionItemService {
 
     public PrescriptionItemDto getPrescriptionItemById(Long id) {
         PrescriptionItemDto prescriptionItemDto = null;
-        if (prescriptionItemRepo.findById(id).isPresent()) {
+        if (id != null && prescriptionItemRepo.findById(id).isPresent()) {
             prescriptionItemDto = prescriptionItemMapper.toDTO(prescriptionItemRepo.getById(id));
         }
         return prescriptionItemDto;
@@ -79,8 +79,8 @@ public class PrescriptionItemService {
 
     public void updatePrescriptionItem(PrescriptionItemDto prescriptionItemDto) {
         PrescriptionItem prescriptionItem = null;
-        if (prescriptionItemRepo.findById(prescriptionItemDto.getId()).isPresent()) {
-            prescriptionItem = prescriptionItemRepo.findById(prescriptionItemDto.getId()).get();
+        if (prescriptionItemRepo.findById(prescriptionItemDto.getItemId()).isPresent()) {
+            prescriptionItem = prescriptionItemRepo.findById(prescriptionItemDto.getItemId()).get();
         }
 
         if (prescriptionItem != null) {
@@ -91,7 +91,7 @@ public class PrescriptionItemService {
             if (prescriptionItemDto.getCancellationReason() != null && !prescriptionItemDto.getCancellationReason().isEmpty()) {
                 prescriptionItem.setCancellationReason(prescriptionItemDto.getCancellationReason());
                 prescriptionItemRepo.save(prescriptionItem);
-                eventService.updateEventStatus(prescriptionItemDto.getId(), prescriptionItemDto.getCancellationReason());
+                eventService.updateEventStatus(prescriptionItemDto.getItemId(), prescriptionItemDto.getCancellationReason());
             }
 
             if (prescriptionItemDto.getDose() != null) {

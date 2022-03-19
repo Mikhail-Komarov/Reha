@@ -131,8 +131,8 @@ public class ValidationService {
             therapy = therapyService.getTherapyDtoById(therapyId);
         }
 
-        if (prescriptionItemDto.getId() != null) {
-            oldItem = prescriptionItemService.getPrescriptionItemById(prescriptionItemDto.getId());
+        if (prescriptionItemDto.getItemId() != null) {
+            oldItem = prescriptionItemService.getPrescriptionItemById(prescriptionItemDto.getItemId());
             if (oldItem != null) {
                 oldStatus = oldItem.getPrescriptionItemStatus();
                 therapy = oldItem.getTherapy();
@@ -208,106 +208,110 @@ public class ValidationService {
     }
 
     public void checkPatternUpdate(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
-        PrescriptionItemDto prescriptionItem = prescriptionItemService.getPrescriptionItemById(prescriptionItemDto.getId());
+        PrescriptionItemDto prescriptionItem = prescriptionItemService.getPrescriptionItemById(prescriptionItemDto.getItemId());
 
-        Set<EventDto> eventsById = StreamSupport
-                .stream(eventService.getEventDtoByPrescriptionItemId(prescriptionItemDto.getId())
-                        .spliterator(), false)
-                .collect(Collectors.toSet());
+        if (prescriptionItem != null) {
+            Set<EventDto> eventsById = StreamSupport
+                    .stream(eventService.getEventDtoByPrescriptionItemId(prescriptionItemDto.getPrescriptionId())
+                            .spliterator(), false)
+                    .collect(Collectors.toSet());
 
-        List<LocalDateTime> oldDatesOfActEvent = eventsById.stream()
-                .filter(p -> !p.getEventStatus().equals(EventStatus.CANCELLED))
-                .map(EventDto::getDateTime).collect(Collectors.toList());
+            List<LocalDateTime> oldDatesOfActEvent = eventsById.stream()
+                    .filter(p -> !p.getEventStatus().equals(EventStatus.CANCELLED))
+                    .map(EventDto::getDateTime).collect(Collectors.toList());
 
-        List<LocalDateTime> oldDatesOfCompletedEvent = eventsById.stream()
-                .filter(p -> p.getEventStatus().equals(EventStatus.COMPLETED))
-                .map(EventDto::getDateTime).collect(Collectors.toList());
+            List<LocalDateTime> oldDatesOfCompletedEvent = eventsById.stream()
+                    .filter(p -> p.getEventStatus().equals(EventStatus.COMPLETED))
+                    .map(EventDto::getDateTime).collect(Collectors.toList());
 
-        int numberOfDays = prescriptionItemDto.getDate().size();
-        int perDay = prescriptionItemDto.getTime().size();
+            int numberOfDays = prescriptionItemDto.getDate().size();
+            int perDay = prescriptionItemDto.getTime().size();
 
-        List<LocalDateTime> newEventDateList = prescriptionItemService.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
+            List<LocalDateTime> newEventDateList = prescriptionItemService.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
 
-        if (numberOfDays * perDay > 0
-                && prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.PRESCRIBED)) {
+            if (numberOfDays * perDay > 0
+                    && prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.PRESCRIBED)) {
 
-            for (int i = 0; i < numberOfDays; i++) {
-                for (int j = 0; j < perDay; j++) {
-                    newEventDateList.add(prescriptionItemDto
-                            .getDate().get(i)
-                            .atTime(prescriptionItemDto.getTime().get(j)));
+                for (int i = 0; i < numberOfDays; i++) {
+                    for (int j = 0; j < perDay; j++) {
+                        newEventDateList.add(prescriptionItemDto
+                                .getDate().get(i)
+                                .atTime(prescriptionItemDto.getTime().get(j)));
+                    }
                 }
             }
-        }
 
-        LocalDateTime maxEventDate = LocalDateTime.now();
-        LocalDateTime minEventDate = LocalDateTime.now();
-        LocalDateTime maxCompletedEventDate = LocalDateTime.now();
-        LocalDateTime minCompletedEventDate = LocalDateTime.now();
+            LocalDateTime maxEventDate = LocalDateTime.now();
+            LocalDateTime minEventDate = LocalDateTime.now();
+            LocalDateTime maxCompletedEventDate = LocalDateTime.now();
+            LocalDateTime minCompletedEventDate = LocalDateTime.now();
 
-        LocalDate endTreatment = prescriptionItem.getEndTreatment();
-        LocalDate startTreatment = prescriptionItem.getStartTreatment();
+            LocalDate endTreatment = prescriptionItem.getEndTreatment();
+            LocalDate startTreatment = prescriptionItem.getStartTreatment();
 
-        if (prescriptionItemDto.getStartTreatment() != null) {
-            startTreatment = prescriptionItemDto.getStartTreatment();
-        }
-        if (prescriptionItemDto.getEndTreatment() != null) {
-            endTreatment = prescriptionItemDto.getEndTreatment();
-        }
-
-        if (!oldDatesOfActEvent.isEmpty()) {
-            maxEventDate = oldDatesOfActEvent.stream().max(Comparator.naturalOrder()).get();
-            minEventDate = oldDatesOfActEvent.stream().min(Comparator.naturalOrder()).get();
-        }
-
-        if (!oldDatesOfCompletedEvent.isEmpty()) {
-            minCompletedEventDate = oldDatesOfCompletedEvent.stream().min(Comparator.naturalOrder()).get();
-            maxCompletedEventDate = oldDatesOfCompletedEvent.stream().max(Comparator.naturalOrder()).get();
-        }
-
-        if (!newEventDateList.isEmpty()) {
-            maxEventDate = newEventDateList.stream().max(Comparator.naturalOrder()).get();
-            minEventDate = newEventDateList.stream().min(Comparator.naturalOrder()).get();
-        }
-
-        if (!newEventDateList.isEmpty() && minEventDate.isBefore(LocalDateTime.now())) {
-
-            bindingResult.addError(new FieldError("updateItem", "time", "It is not possible to assign an event earlier than the current moment"));
-        }
-
-        if ((prescriptionItemDto.getStartTreatment() != null
-                || prescriptionItemDto.getEndTreatment() != null)
-                && !prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.CANCELLED)) {
-
-            if (newEventDateList.isEmpty() && (startTreatment.isAfter(endTreatment)
-                    || startTreatment.isBefore(LocalDate.now())
-                    || startTreatment.isAfter(minEventDate.toLocalDate()))) {
-                bindingResult.addError(new FieldError("updateItem", "startTreatment", "Illegal date statement!"));
+            if (prescriptionItemDto.getStartTreatment() != null) {
+                startTreatment = prescriptionItemDto.getStartTreatment();
+            }
+            if (prescriptionItemDto.getEndTreatment() != null) {
+                endTreatment = prescriptionItemDto.getEndTreatment();
             }
 
-
-            if (newEventDateList.isEmpty() && (endTreatment.isBefore(startTreatment)
-                    || endTreatment.isBefore(LocalDate.now())
-                    || endTreatment.isBefore(maxEventDate.toLocalDate()))) {
-                bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement!"));
+            if (!oldDatesOfActEvent.isEmpty()) {
+                maxEventDate = oldDatesOfActEvent.stream().max(Comparator.naturalOrder()).get();
+                minEventDate = oldDatesOfActEvent.stream().min(Comparator.naturalOrder()).get();
             }
 
-            if (!newEventDateList.isEmpty() && (startTreatment.isAfter(endTreatment)
-                    || startTreatment.isBefore(LocalDate.now())
-                    || startTreatment.isAfter(minEventDate.toLocalDate())
-                    || startTreatment.isAfter(minCompletedEventDate.toLocalDate()))
-            ) {
-                bindingResult.addError(new FieldError("updateItem", "startTreatment", "Illegal date statement, check date and time pattern"));
+            if (!oldDatesOfCompletedEvent.isEmpty()) {
+                minCompletedEventDate = oldDatesOfCompletedEvent.stream().min(Comparator.naturalOrder()).get();
+                maxCompletedEventDate = oldDatesOfCompletedEvent.stream().max(Comparator.naturalOrder()).get();
             }
 
-            if (!newEventDateList.isEmpty() && (endTreatment.isBefore(startTreatment)
-                    || endTreatment.isBefore(LocalDate.now())
-                    || endTreatment.isBefore(maxEventDate.toLocalDate())
-                    || endTreatment.isBefore(maxCompletedEventDate.toLocalDate()))
-            ) {
-                bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement, check date and time pattern"));
+            if (!newEventDateList.isEmpty()) {
+                maxEventDate = newEventDateList.stream().max(Comparator.naturalOrder()).get();
+                minEventDate = newEventDateList.stream().min(Comparator.naturalOrder()).get();
             }
 
+            if (!newEventDateList.isEmpty() && minEventDate.isBefore(LocalDateTime.now())) {
+
+                bindingResult.addError(new FieldError("updateItem", "time", "It is not possible to assign an event earlier than the current moment"));
+            }
+
+            if ((prescriptionItemDto.getStartTreatment() != null
+                    || prescriptionItemDto.getEndTreatment() != null)
+                    && !prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.CANCELLED)) {
+
+                if (newEventDateList.isEmpty() && (startTreatment.isAfter(endTreatment)
+                        || startTreatment.isBefore(LocalDate.now())
+                        || startTreatment.isAfter(minEventDate.toLocalDate()))) {
+                    bindingResult.addError(new FieldError("updateItem", "startTreatment", "Illegal date statement!"));
+                }
+
+
+                if (newEventDateList.isEmpty() && (endTreatment.isBefore(startTreatment)
+                        || endTreatment.isBefore(LocalDate.now())
+                        || endTreatment.isBefore(maxEventDate.toLocalDate()))) {
+                    bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement!"));
+                }
+
+                if (!newEventDateList.isEmpty() && (startTreatment.isAfter(endTreatment)
+                        || startTreatment.isBefore(LocalDate.now())
+                        || startTreatment.isAfter(minEventDate.toLocalDate())
+                        || startTreatment.isAfter(minCompletedEventDate.toLocalDate()))
+                ) {
+                    bindingResult.addError(new FieldError("updateItem", "startTreatment", "Illegal date statement, check date and time pattern"));
+                }
+
+                if (!newEventDateList.isEmpty() && (endTreatment.isBefore(startTreatment)
+                        || endTreatment.isBefore(LocalDate.now())
+                        || endTreatment.isBefore(maxEventDate.toLocalDate())
+                        || endTreatment.isBefore(maxCompletedEventDate.toLocalDate()))
+                ) {
+                    bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement, check date and time pattern"));
+                }
+
+            }
+        } else {
+            bindingResult.addError(new FieldError("updateItem", "itemId", "Prescription is non-existent"));
         }
     }
 }

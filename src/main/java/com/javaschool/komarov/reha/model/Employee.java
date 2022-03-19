@@ -1,8 +1,7 @@
 package com.javaschool.komarov.reha.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +15,7 @@ import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Table(name = "employee")
 public class Employee {

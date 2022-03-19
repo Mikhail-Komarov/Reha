@@ -34,8 +34,9 @@ public class PatientService {
     public PatientDto getPatientById(Long id) {
         if (patientRepo.findById(id).isPresent()) {
             return patientMapper.toDTO(patientRepo.findById(id).get());
+        } else {
+            return null;
         }
-        else return null;
     }
 
     public void updatePatientStatus(PatientDto patientDto) {

@@ -103,7 +103,6 @@ public class PrescriptionItemController {
     public String addPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("newItem") PrescriptionItemDto prescriptionItemDto,
                                   BindingResult bindingResult, Model model) {
-        prescriptionItemDto.setId(null);
         validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasError", true);
@@ -120,11 +119,13 @@ public class PrescriptionItemController {
     public String updPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("updateItem") PrescriptionItemDto prescriptionItemDto,
                                   BindingResult bindingResult, Model model) {
-        validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         validationService.checkPatternUpdate(prescriptionItemDto, bindingResult);
+        if (!bindingResult.hasErrors()) {
+            validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasError", true);
-            model.addAttribute("error", "Error in item id:" + prescriptionItemDto.getId());
+            model.addAttribute("error", "Error in item id:" + prescriptionItemDto.getItemId());
             return "item";
         } else {
             prescriptionItemService.updatePrescriptionItem(prescriptionItemDto);

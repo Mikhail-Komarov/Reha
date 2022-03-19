@@ -57,7 +57,7 @@ public class EventService {
 
     public void createEvent(PrescriptionItemDto prescriptionItemDto, List<LocalDateTime> list) {
         List<EventDto> eventDtos = new ArrayList<>();
-        updateEventStatus(prescriptionItemDto.getId(), "Date and time pattern was changed");
+        updateEventStatus(prescriptionItemDto.getItemId(), "Date and time pattern was changed");
         for (LocalDateTime dateTime : list) {
             EventDto eventDto = new EventDto();
             eventDto.setEventStatus(EventStatus.SCHEDULED);
@@ -72,8 +72,9 @@ public class EventService {
     public EventStatus getEventStatusById(long id) {
         if (eventRepo.findById(id).isPresent()) {
             return eventRepo.findById(id).get().getEventStatus();
+        } else {
+            return null;
         }
-        else return null;
     }
 
     @Transactional

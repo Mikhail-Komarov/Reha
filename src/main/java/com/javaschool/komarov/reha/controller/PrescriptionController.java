@@ -60,7 +60,6 @@ public class PrescriptionController {
     public String addPrescription(@PathVariable("id") long id, @AuthenticationPrincipal UserDetails userDetails,
                                   @ModelAttribute("newPrescription") PrescriptionDto prescriptionDto,
                                   BindingResult bindingResult) {
-        prescriptionDto.setId(null);
         validationService.checkPrescription(prescriptionDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "prescription";

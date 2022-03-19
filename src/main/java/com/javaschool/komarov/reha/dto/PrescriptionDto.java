@@ -1,23 +1,16 @@
 package com.javaschool.komarov.reha.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrescriptionDto {
-    private Long id;
+    private Long prescriptionId;
     private String diagnosis;
     private PatientDto patient;
     private EmployeeDto employee;
 
-    public PrescriptionDto(String diagnosis, PatientDto patient, EmployeeDto employee) {
-        this.diagnosis = diagnosis;
-        this.patient = patient;
-        this.employee = employee;
-    }
 }

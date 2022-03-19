@@ -1,8 +1,8 @@
 package com.javaschool.komarov.reha.model;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -17,8 +17,8 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "event")
 public class Event {
@@ -34,25 +34,4 @@ public class Event {
     private LocalDateTime dateTime;
     @ManyToOne
     private PrescriptionItem prescriptionItem;
-
-    public Event(Long id, EventStatus eventStatus, String cancellationReason, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
-        this.id = id;
-        this.eventStatus = eventStatus;
-        this.cancellationReason = cancellationReason;
-        this.dateTime = dateTime;
-        this.prescriptionItem = prescriptionItem;
-    }
-
-    public Event(EventStatus eventStatus, String cancellationReason, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
-        this.eventStatus = eventStatus;
-        this.cancellationReason = cancellationReason;
-        this.dateTime = dateTime;
-        this.prescriptionItem = prescriptionItem;
-    }
-
-    public Event(EventStatus eventStatus, LocalDateTime dateTime, PrescriptionItem prescriptionItem) {
-        this.eventStatus = eventStatus;
-        this.dateTime = dateTime;
-        this.prescriptionItem = prescriptionItem;
-    }
 }

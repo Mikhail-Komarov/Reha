@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface TherapyMapper {
     TherapyDto toDTO(Therapy model);
+
     Therapy toModel(TherapyDto dto);
+
     Iterable<TherapyDto> toDTOList(Iterable<Therapy> models);
 }
