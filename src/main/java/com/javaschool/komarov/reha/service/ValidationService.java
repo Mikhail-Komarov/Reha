@@ -118,8 +118,8 @@ public class ValidationService {
         Integer dose = prescriptionItemDto.getDose();
         LocalDate startTreatment = prescriptionItemDto.getStartTreatment();
         LocalDate endTreatment = prescriptionItemDto.getEndTreatment();
-        List<LocalDate> dat = prescriptionItemDto.getDate();
-        List<LocalTime> tim = prescriptionItemDto.getTime();
+        List<LocalDate> date = prescriptionItemDto.getDate();
+        List<LocalTime> time = prescriptionItemDto.getTime();
         PrescriptionItemStatus prescriptionItemStatus = prescriptionItemDto.getPrescriptionItemStatus();
         String cancellationReason = prescriptionItemDto.getCancellationReason();
         long therapyId = prescriptionItemDto.getTherapyId();
@@ -139,25 +139,29 @@ public class ValidationService {
             }
         }
 
-        LocalDate maxEventDate;
-        LocalDate minEventDate;
+        LocalDateTime maxEventDate;
+        LocalDateTime minEventDate;
+        List<LocalDateTime> dateTimeList = prescriptionItemService.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
 
-        if (dat != null && oldItem == null) {
-            if (prescriptionItemDto.getDate().stream().max(Comparator.naturalOrder()).isPresent()
-                    && prescriptionItemDto.getDate().stream().min(Comparator.naturalOrder()).isPresent()) {
-                maxEventDate = prescriptionItemDto.getDate().stream().max(Comparator.naturalOrder()).get();
-                minEventDate = prescriptionItemDto.getDate().stream().min(Comparator.naturalOrder()).get();
+        if (date != null && oldItem == null) {
+            if (dateTimeList.stream().max(Comparator.naturalOrder()).isPresent()) {
+                maxEventDate = dateTimeList.stream().max(Comparator.naturalOrder()).get();
+                minEventDate = dateTimeList.stream().min(Comparator.naturalOrder()).get();
             } else {
-                maxEventDate = LocalDate.now();
-                minEventDate = LocalDate.now();
+                maxEventDate = LocalDateTime.now();
+                minEventDate = LocalDateTime.now();
             }
             if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
                     || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
-                    || prescriptionItemDto.getStartTreatment().isAfter(minEventDate)
+                    || prescriptionItemDto.getStartTreatment().isAfter(minEventDate.toLocalDate())
                     || prescriptionItemDto.getEndTreatment().isBefore(prescriptionItemDto.getStartTreatment())
-                    || prescriptionItemDto.getEndTreatment().isBefore(maxEventDate)) {
+                    || prescriptionItemDto.getEndTreatment().isBefore(maxEventDate.toLocalDate())) {
                 bindingResult.addError(new FieldError("newPrescription", "startTreatment", "Illegal date statement!"));
                 bindingResult.addError(new FieldError("newPrescription", "endTreatment", "Illegal date statement!"));
+            }
+
+            if (minEventDate.isBefore(LocalDateTime.now())) {
+                bindingResult.addError(new FieldError("newPrescription", "time", "It is not possible to assign an event earlier than the current moment"));
             }
         }
 
@@ -181,7 +185,7 @@ public class ValidationService {
         }
 
         if (oldStatus != null) {
-            if (oldStatus.equals(PrescriptionItemStatus.CANCELLED) && (dose != null || startTreatment != null || endTreatment != null || dat != null || tim != null
+            if (oldStatus.equals(PrescriptionItemStatus.CANCELLED) && (dose != null || startTreatment != null || endTreatment != null || date != null || time != null
                     || prescriptionItemStatus != null || cancellationReason != null || therapy != null)) {
                 bindingResult.addError(new FieldError("updateItem", "prescriptionItemStatus", "Changes to the cancelled prescription are not available"));
             }
@@ -190,7 +194,7 @@ public class ValidationService {
         if (prescriptionItemStatus != null && oldItem == null) {
             if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)
                     && (dose != null || startTreatment != null || endTreatment != null
-                    || dat != null || tim != null || therapy != null)) {
+                    || date != null || time != null || therapy != null)) {
                 bindingResult.addError(new FieldError("newItem", "prescriptionItemStatus", "Only the reason for cancellation field is available for this status"));
             }
         }
@@ -266,6 +270,11 @@ public class ValidationService {
             minEventDate = newEventDateList.stream().min(Comparator.naturalOrder()).get();
         }
 
+        if (!newEventDateList.isEmpty() && minEventDate.isBefore(LocalDateTime.now())) {
+
+            bindingResult.addError(new FieldError("updateItem", "time", "It is not possible to assign an event earlier than the current moment"));
+        }
+
         if ((prescriptionItemDto.getStartTreatment() != null
                 || prescriptionItemDto.getEndTreatment() != null)
                 && !prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.CANCELLED)) {
@@ -298,7 +307,7 @@ public class ValidationService {
             ) {
                 bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement, check date and time pattern"));
             }
-        }
 
+        }
     }
 }

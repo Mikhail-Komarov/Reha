@@ -145,7 +145,8 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"/>
+                            <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"></div>
+                            <br>
                             <div class="">
                                 <strong>Select time:</strong>
                                 <select th:class="${#fields.hasErrors('time')} ? 'celect-control is-invalid'" th:field="*{time}" multiple="multiple">
@@ -156,7 +157,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{time}"/>
+                        <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{time}"></div>
+                        <br>
                         <button type="submit">Add</button>
                     </form>
                 </div>
@@ -232,7 +234,8 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"></div>
+                            <br>
+                            <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{date}"></div>
                             <div class="">
                                 <strong>Select time:</strong>
                                 <select th:class="${#fields.hasErrors('time')} ? 'celect-control is-invalid'" th:field="*{time}" multiple="multiple">
@@ -244,7 +247,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{time}"/>
+                        <div class="alert alert-warning" role="alert" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{time}"></div>
+                        <br>
                         <button type="submit">Update</button>
                     </form>
                 </div>
