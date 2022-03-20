@@ -58,6 +58,7 @@ public class ValidationService {
         } else if (!patientHealthInsurance.matches("[0-9]{8}")) {
             bindingResult.addError(new FieldError("newPatient", "healthInsurance", "8 characters, numbers only"));
         }
+
         if (patientService.checkPatientInDb(patientHealthInsurance)) {
             bindingResult.addError(new FieldError("newPatient", "healthInsurance", "This patient has already been registered"));
         }
@@ -77,9 +78,10 @@ public class ValidationService {
         PatientStatus status = patientDto.getStatus();
         if (status == null) {
             bindingResult.addError(new FieldError("updatedPatient", "status", "Status should not be empty"));
-        } else if (!(status.equals(PatientStatus.ISTREATED) || status.equals(PatientStatus.DISCHARGED))) {
+        } else if (!(status.equals(PatientStatus.IS_TREATED) || status.equals(PatientStatus.DISCHARGED))) {
             bindingResult.addError(new FieldError("updatedPatient", "status", "Invalid status"));
         }
+
         if (patientService.hasActiveEvent(patientDto.getId())
                 && patientDto.getStatus().equals(PatientStatus.DISCHARGED)) {
             bindingResult.addError(new FieldError("updatedPatient", "status", "End active events"));
@@ -110,7 +112,6 @@ public class ValidationService {
                     bindingResult.addError(new FieldError("newEvent", "eventStatus", "Cancellation reason allowed only for the CANCELLED status"));
                 }
             }
-
         }
     }
 
@@ -151,6 +152,7 @@ public class ValidationService {
                 maxEventDate = LocalDateTime.now();
                 minEventDate = LocalDateTime.now();
             }
+
             if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
                     || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
                     || prescriptionItemDto.getStartTreatment().isAfter(minEventDate.toLocalDate())
@@ -210,7 +212,9 @@ public class ValidationService {
     public void checkPatternUpdate(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
         PrescriptionItemDto prescriptionItem = prescriptionItemService.getPrescriptionItemById(prescriptionItemDto.getItemId());
 
-        if (prescriptionItem != null) {
+        if (prescriptionItem == null) {
+            bindingResult.addError(new FieldError("updateItem", "itemId", "Prescription is non-existent"));
+        } else {
             Set<EventDto> eventsById = StreamSupport
                     .stream(eventService.getEventDtoByPrescriptionItemId(prescriptionItemDto.getPrescriptionId())
                             .spliterator(), false)
@@ -308,10 +312,7 @@ public class ValidationService {
                 ) {
                     bindingResult.addError(new FieldError("updateItem", "endTreatment", "Illegal date statement, check date and time pattern"));
                 }
-
             }
-        } else {
-            bindingResult.addError(new FieldError("updateItem", "itemId", "Prescription is non-existent"));
         }
     }
 }

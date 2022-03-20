@@ -5,7 +5,6 @@ import com.javaschool.komarov.reha.dto.PatientDto;
 import com.javaschool.komarov.reha.dto.PrescriptionDto;
 import com.javaschool.komarov.reha.mapper.PrescriptionMapper;
 import com.javaschool.komarov.reha.repository.PrescriptionRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ public class PrescriptionService {
     private final PatientService patientService;
     private final PrescriptionRepo prescriptionRepo;
 
-    @Autowired
     public PrescriptionService(PrescriptionMapper prescriptionMapper,
                                EmployeeService employeeService, PatientService patientService,
                                PrescriptionRepo prescriptionRepo) {

@@ -1,7 +1,7 @@
 package com.javaschool.komarov.reha.repository;
 
-import com.javaschool.komarov.reha.model.Patient;
 import com.javaschool.komarov.reha.model.PatientStatus;
+import com.javaschool.komarov.reha.model.entity.Patient;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,9 +12,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface PatientRepo extends CrudRepository<Patient, Long> {
+
     @Transactional
     @Modifying
-    @Query("update Patient p set p.Status = :status where p.id = :id")
+    @Query("UPDATE Patient p set p.Status = :status where p.id = :id")
     void updatePatientStatus(@Param(value = "id") long id, @Param(value = "status") PatientStatus status);
 
     @Query(value = "SELECT DISTINCT patient.id from patient\n" +

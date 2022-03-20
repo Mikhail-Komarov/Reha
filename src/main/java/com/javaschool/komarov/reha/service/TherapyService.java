@@ -2,8 +2,11 @@ package com.javaschool.komarov.reha.service;
 
 import com.javaschool.komarov.reha.dto.TherapyDto;
 import com.javaschool.komarov.reha.mapper.TherapyMapper;
+import com.javaschool.komarov.reha.model.entity.Therapy;
 import com.javaschool.komarov.reha.repository.TherapyRepo;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class TherapyService {
@@ -20,10 +23,10 @@ public class TherapyService {
     }
 
     public TherapyDto getTherapyDtoById(Long id) {
-        if (therapyRepo.findById(id).isPresent()) {
-            return therapyMapper.toDTO(therapyRepo.findById(id).get());
-        } else {
+        if (id==null){
             return null;
         }
+        Optional<Therapy> therapy = therapyRepo.findById(id);
+        return therapy.map(therapyMapper::toDTO).orElse(null);
     }
 }

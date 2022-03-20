@@ -18,12 +18,12 @@ public class PatientService {
         this.patientRepo = patientRepo;
     }
 
-    public Boolean checkPatientInDb(String healthInsurance) {
+    public boolean checkPatientInDb(String healthInsurance) {
         return patientRepo.getPatientByHealthInsurance(healthInsurance).isPresent();
     }
 
     public void savePatient(PatientDto patientDto) {
-        patientDto.setStatus(PatientStatus.NOTDEFINED);
+        patientDto.setStatus(PatientStatus.UNDEFINED);
         patientRepo.save(patientMapper.toModel(patientDto));
     }
 
@@ -46,17 +46,17 @@ public class PatientService {
     }
 
     public void setStatusIsTreated(PatientDto patientDto) {
-        if (!patientDto.getStatus().equals(PatientStatus.ISTREATED)) {
-            patientDto.setStatus(PatientStatus.ISTREATED);
+        if (!patientDto.getStatus().equals(PatientStatus.IS_TREATED)) {
+            patientDto.setStatus(PatientStatus.IS_TREATED);
+            updatePatientStatus(patientDto);
         }
-        updatePatientStatus(patientDto);
     }
 
     public Set<Long> patientIdWithActiveEvent() {
         return patientRepo.findAllPatientIdWithActiveEvent();
     }
 
-    public Boolean hasActiveEvent(Long id) {
+    public boolean hasActiveEvent(Long id) {
         return patientIdWithActiveEvent().contains(id);
     }
 }

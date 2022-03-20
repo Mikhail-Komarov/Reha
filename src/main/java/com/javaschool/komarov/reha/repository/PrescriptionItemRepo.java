@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.repository;
 
-import com.javaschool.komarov.reha.model.PrescriptionItem;
+import com.javaschool.komarov.reha.model.entity.PrescriptionItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PrescriptionItemRepo extends JpaRepository<PrescriptionItem, Long> {

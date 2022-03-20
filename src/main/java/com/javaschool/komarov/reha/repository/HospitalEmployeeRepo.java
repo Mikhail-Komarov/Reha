@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.repository;
 
-import com.javaschool.komarov.reha.model.Employee;
+import com.javaschool.komarov.reha.model.entity.Employee;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

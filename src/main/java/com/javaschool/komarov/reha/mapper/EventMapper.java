@@ -1,7 +1,7 @@
 package com.javaschool.komarov.reha.mapper;
 
 import com.javaschool.komarov.reha.dto.EventDto;
-import com.javaschool.komarov.reha.model.Event;
+import com.javaschool.komarov.reha.model.entity.Event;
 import org.mapstruct.Mapper;
 
 @Mapper(uses = PrescriptionItemMapper.class)

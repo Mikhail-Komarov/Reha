@@ -1,8 +1,8 @@
 package com.javaschool.komarov.reha.model;
 
 public enum PatientStatus {
-    NOTDEFINED,
-    ISTREATED,
+    UNDEFINED,
+    IS_TREATED,
     DISCHARGED
 }
 

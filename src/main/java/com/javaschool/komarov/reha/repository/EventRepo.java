@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.repository;
 
-import com.javaschool.komarov.reha.model.Event;
+import com.javaschool.komarov.reha.model.entity.Event;
 import com.javaschool.komarov.reha.model.EventStatus;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +15,6 @@ public interface EventRepo extends CrudRepository<Event, Long> {
 
     Iterable<Event> findEventByDateTimeBetween(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 
-    @Modifying
     @Query(value = "SELECT * from event\n" +
             "join prescription_item pi\n" +
             "on pi.id = event.prescription_item_id\n" +
@@ -25,8 +24,6 @@ public interface EventRepo extends CrudRepository<Event, Long> {
             "and event.date_time between ?2 and ?3", nativeQuery = true)
     Iterable<Event> findEventByDateAndPatient(String healthInsurance, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 
-
-    @Modifying
     @Query(value = "SELECT * from event\n" +
             "join prescription_item pi\n" +
             "on pi.id = event.prescription_item_id\n" +
@@ -35,15 +32,14 @@ public interface EventRepo extends CrudRepository<Event, Long> {
             "where p2.health_insurance =?", nativeQuery = true)
     Iterable<Event> findEventByPatient(String healthInsurance);
 
-    @Modifying
     @Query(value = "SELECT DISTINCT * from event where status = 'SCHEDULED'and prescription_item_id = :id", nativeQuery = true)
     Set<Event> findActiveEventByPrescriptionItemId(@Param(value = "id") Long id);
 
     @Modifying
-    @Query("update Event e set e.eventStatus = :status where e.id = :id")
+    @Query("UPDATE Event e set e.eventStatus = :status where e.id = :id")
     void updateEventStatus(@Param(value = "id") Long id, @Param(value = "status") EventStatus status);
 
     @Modifying
-    @Query("update Event e set e.cancellationReason = :reason where e.id = :id")
+    @Query("UPDATE Event e set e.cancellationReason = :reason where e.id = :id")
     void addCancellationReason(@Param(value = "id") Long id, @Param(value = "reason") String reason);
 }

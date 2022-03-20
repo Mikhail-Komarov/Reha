@@ -1,7 +1,7 @@
 package com.javaschool.komarov.reha.mapper;
 
 import com.javaschool.komarov.reha.dto.PatientDto;
-import com.javaschool.komarov.reha.model.Patient;
+import com.javaschool.komarov.reha.model.entity.Patient;
 import org.mapstruct.Mapper;
 
 @Mapper

@@ -1,8 +1,9 @@
-package com.javaschool.komarov.reha.model;
+package com.javaschool.komarov.reha.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.javaschool.komarov.reha.model.Role;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,23 +16,26 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Set;
 
-
+@Getter
+@Setter
 @Entity
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "therapy")
-public class Therapy {
+@Table(name = "employee")
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
+    private String firstName;
+    private String lastName;
+    @Column(name = "login", unique = true, nullable = false)
+    private String login;
+    private String password;
     @Enumerated(EnumType.STRING)
-    private TherapyType therapyType;
-    @OneToMany(mappedBy = "therapy")
+    private Role role;
+    @OneToMany(mappedBy = "employee")
+    private Set<Prescription> prescriptions;
+    @OneToMany(mappedBy = "employee")
     private Set<PrescriptionItem> prescriptionItems;
 
 }
-

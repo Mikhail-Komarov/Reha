@@ -45,7 +45,7 @@
             <div sec:authorize="hasAnyAuthority('employee:write')">
                 <form name="status" th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/update'}" th:object="${updatedPatient}">
                     <select th:class="${#fields.hasErrors('status')} ? 'celect-control is-invalid'" th:field="*{status}">
-                        <option value="ISTREATED" selected>Is treated</option>
+                        <option value="IS_TREATED" selected>Is treated</option>
                         <option value="DISCHARGED">Discharged</option>
                     </select>
                     <br>

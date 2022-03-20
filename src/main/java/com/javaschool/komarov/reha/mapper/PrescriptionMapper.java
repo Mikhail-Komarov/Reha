@@ -1,7 +1,7 @@
 package com.javaschool.komarov.reha.mapper;
 
 import com.javaschool.komarov.reha.dto.PrescriptionDto;
-import com.javaschool.komarov.reha.model.Prescription;
+import com.javaschool.komarov.reha.model.entity.Prescription;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

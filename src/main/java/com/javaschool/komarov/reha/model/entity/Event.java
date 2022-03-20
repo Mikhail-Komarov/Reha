@@ -1,8 +1,10 @@
-package com.javaschool.komarov.reha.model;
+package com.javaschool.komarov.reha.model.entity;
 
+import com.javaschool.komarov.reha.model.EventStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -13,38 +15,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.LocalDate;
-import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "prescriptionItem")
-public class PrescriptionItem {
+@Table(name = "event")
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
-    private Integer dose;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startTreatment;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endTreatment;
-    private String timePattern;
-    @ManyToOne
-    private Prescription prescription;
-    @OneToMany(mappedBy = "prescriptionItem")
-    private Set<Event> events;
-    @ManyToOne
-    private Therapy therapy;
-    @ManyToOne
-    private Employee employee;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private PrescriptionItemStatus prescriptionItemStatus;
+    private EventStatus eventStatus;
     private String cancellationReason;
-
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime dateTime;
+    @ManyToOne
+    private PrescriptionItem prescriptionItem;
 }

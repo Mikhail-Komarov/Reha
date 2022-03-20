@@ -3,7 +3,7 @@ package com.javaschool.komarov.reha.service;
 import com.javaschool.komarov.reha.dto.EventDto;
 import com.javaschool.komarov.reha.dto.PrescriptionItemDto;
 import com.javaschool.komarov.reha.mapper.EventMapper;
-import com.javaschool.komarov.reha.model.Event;
+import com.javaschool.komarov.reha.model.entity.Event;
 import com.javaschool.komarov.reha.model.EventStatus;
 import com.javaschool.komarov.reha.repository.EventRepo;
 import org.springframework.stereotype.Service;
@@ -96,16 +96,15 @@ public class EventService {
 
     public void updateEventStatus(Long id, String cancellationReason) {
         Set<Event> events = eventRepo.findActiveEventByPrescriptionItemId(id);
-        System.out.println(events);
-        if (!events.isEmpty()) {
-            for (Event event : events) {
-                if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
-                    event.setEventStatus(EventStatus.CANCELLED);
-                    event.setCancellationReason(cancellationReason);
-                }
-            }
-            eventRepo.saveAll(events);
+        if (events.isEmpty()) {
+            return;
         }
+        for (Event event : events) {
+            if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
+                event.setEventStatus(EventStatus.CANCELLED);
+                event.setCancellationReason(cancellationReason);
+            }
+        }
+        eventRepo.saveAll(events);
     }
-
 }
