@@ -78,7 +78,11 @@ public class ValidationServiceImpl implements ValidationService {
             } else if (!therapyDto.getName().matches("^[a-zA-Z][a-zA-Z]{1,20}$")) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "The use of numbers and special characters is not allowed"));
             }
-            if (therapyDto.getTherapyType() == null || (therapyDto.getTherapyType().equals(TherapyType.PROCEDURE) || therapyDto.getTherapyType().equals(TherapyType.MEDICINE))) {
+            else if (therapyServiceImpl.therapyIsExist(therapyDto.getName())) {
+                bindingResult.addError(new FieldError("newTherapy", "name", "Therapy with this name is exist"));
+            }
+
+            if (therapyDto.getTherapyType() == null || !(therapyDto.getTherapyType().equals(TherapyType.PROCEDURE) || therapyDto.getTherapyType().equals(TherapyType.MEDICINE))) {
                 bindingResult.addError(new FieldError("newTherapy", "therapyType", "Invalid therapy status"));
             }
 
