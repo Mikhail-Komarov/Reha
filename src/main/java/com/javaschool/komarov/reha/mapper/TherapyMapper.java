@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.mapper;
 
-import com.javaschool.komarov.reha.dto.TherapyDto;
+import com.javaschool.komarov.reha.model.dto.TherapyDto;
 import com.javaschool.komarov.reha.model.entity.Therapy;
 import org.mapstruct.Mapper;
 

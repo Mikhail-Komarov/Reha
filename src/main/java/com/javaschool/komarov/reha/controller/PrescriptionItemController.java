@@ -1,16 +1,18 @@
 package com.javaschool.komarov.reha.controller;
 
-import com.javaschool.komarov.reha.dto.EmployeeDto;
-import com.javaschool.komarov.reha.dto.PatientDto;
-import com.javaschool.komarov.reha.dto.PrescriptionDto;
-import com.javaschool.komarov.reha.dto.PrescriptionItemDto;
-import com.javaschool.komarov.reha.dto.TherapyDto;
-import com.javaschool.komarov.reha.service.EmployeeService;
-import com.javaschool.komarov.reha.service.PatientService;
-import com.javaschool.komarov.reha.service.PrescriptionItemService;
-import com.javaschool.komarov.reha.service.PrescriptionService;
-import com.javaschool.komarov.reha.service.TherapyService;
-import com.javaschool.komarov.reha.service.ValidationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.javaschool.komarov.reha.model.dto.EmployeeDto;
+import com.javaschool.komarov.reha.model.dto.PatientDto;
+import com.javaschool.komarov.reha.model.dto.PrescriptionDto;
+import com.javaschool.komarov.reha.model.dto.PrescriptionItemDto;
+import com.javaschool.komarov.reha.model.dto.TherapyDto;
+import com.javaschool.komarov.reha.service.impl.EmployeeServiceImpl;
+import com.javaschool.komarov.reha.service.impl.PatientServiceImpl;
+import com.javaschool.komarov.reha.service.impl.PrescriptionItemServiceImpl;
+import com.javaschool.komarov.reha.service.impl.PrescriptionServiceImpl;
+import com.javaschool.komarov.reha.service.impl.SenderServiceImpl;
+import com.javaschool.komarov.reha.service.impl.TherapyServiceImpl;
+import com.javaschool.komarov.reha.service.impl.ValidationServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,48 +25,48 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
 @Controller
 @RequestMapping("/patient/{id}/prescription/{num}")
 public class PrescriptionItemController {
-    private final PatientService patientService;
-    private final PrescriptionService prescriptionService;
-    private final PrescriptionItemService prescriptionItemService;
-    private final EmployeeService employeeService;
-    private final TherapyService therapyService;
-    private final ValidationService validationService;
+    private final PatientServiceImpl patientServiceImpl;
+    private final PrescriptionServiceImpl prescriptionServiceImpl;
+    private final PrescriptionItemServiceImpl prescriptionItemServiceImpl;
+    private final EmployeeServiceImpl employeeServiceImpl;
+    private final TherapyServiceImpl therapyServiceImpl;
+    private final ValidationServiceImpl validationServiceImpl;
+    private final SenderServiceImpl senderServiceImpl;
 
-    public PrescriptionItemController(PatientService patientService, PrescriptionService prescriptionService, PrescriptionItemService prescriptionItemService,
-                                      EmployeeService employeeService, TherapyService therapyService, ValidationService validationService) {
-        this.patientService = patientService;
-        this.prescriptionService = prescriptionService;
-        this.prescriptionItemService = prescriptionItemService;
-        this.employeeService = employeeService;
-        this.therapyService = therapyService;
-        this.validationService = validationService;
+    public PrescriptionItemController(PatientServiceImpl patientServiceImpl, PrescriptionServiceImpl prescriptionServiceImpl,
+                                      PrescriptionItemServiceImpl prescriptionItemServiceImpl,
+                                      EmployeeServiceImpl employeeServiceImpl, TherapyServiceImpl therapyServiceImpl, ValidationServiceImpl validationServiceImpl,
+                                      SenderServiceImpl senderServiceImpl) {
+        this.patientServiceImpl = patientServiceImpl;
+        this.prescriptionServiceImpl = prescriptionServiceImpl;
+        this.prescriptionItemServiceImpl = prescriptionItemServiceImpl;
+        this.employeeServiceImpl = employeeServiceImpl;
+        this.therapyServiceImpl = therapyServiceImpl;
+        this.validationServiceImpl = validationServiceImpl;
+        this.senderServiceImpl = senderServiceImpl;
     }
 
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
-        return patientService.getPatientById(id);
+        return patientServiceImpl.getPatientDTOById(id);
     }
 
     @ModelAttribute("prescriptionInfo")
     public PrescriptionDto prescriptionInfo(@PathVariable("num") long num) {
-        return prescriptionService.getPrescriptionById(num);
+        return prescriptionServiceImpl.getPrescriptionDTOById(num);
     }
 
     @ModelAttribute("items")
     public Iterable<PrescriptionItemDto> items(@PathVariable("num") long num) {
-        return prescriptionItemService.getPrescriptionItemByPrescriptionID(num);
+        return prescriptionItemServiceImpl.getPrescriptionItemDTOByPrescriptionID(num);
     }
 
     @ModelAttribute("doctor")
     public EmployeeDto doctor(@AuthenticationPrincipal UserDetails userDetails) {
-        return employeeService.getEmployeeByLogin(userDetails.getUsername());
+        return employeeServiceImpl.getEmployeeDTOByLogin(userDetails.getUsername());
     }
 
     @ModelAttribute("newItem")
@@ -79,17 +81,7 @@ public class PrescriptionItemController {
 
     @ModelAttribute("therapies")
     public Iterable<TherapyDto> therapies() {
-        return therapyService.getAllTherapies();
-    }
-
-    @ModelAttribute("dateList")
-    public List<LocalDate> dateList() {
-        return prescriptionItemService.getDateList();
-    }
-
-    @ModelAttribute("timeList")
-    public List<LocalTime> timeList() {
-        return prescriptionItemService.getTimeList();
+        return therapyServiceImpl.getAllTherapiesDTO();
     }
 
     @GetMapping("")
@@ -102,14 +94,16 @@ public class PrescriptionItemController {
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String addPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("newItem") PrescriptionItemDto prescriptionItemDto,
-                                  BindingResult bindingResult, Model model) {
-        validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
+                                  BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails,
+                                  Model model) throws JsonProcessingException {
+        validationServiceImpl.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasError", true);
             model.addAttribute("error", "Adding error!");
             return "item";
         } else {
-            prescriptionItemService.savePrescriptionItem(prescriptionItemDto);
+            prescriptionItemServiceImpl.savePrescriptionItem(prescriptionItemDto, userDetails);
+            senderServiceImpl.sendEvents();
             return "redirect:/patient/" + id + "/prescription/" + num;
         }
     }
@@ -118,17 +112,20 @@ public class PrescriptionItemController {
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String updPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
                                   @ModelAttribute("updateItem") PrescriptionItemDto prescriptionItemDto,
-                                  BindingResult bindingResult, Model model) {
-        validationService.checkPatternUpdate(prescriptionItemDto, bindingResult);
+                                  BindingResult bindingResult,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  Model model) throws JsonProcessingException {
+        validationServiceImpl.checkPatternUpdate(prescriptionItemDto, bindingResult);
         if (!bindingResult.hasErrors()) {
-            validationService.checkPrescriptionItem(prescriptionItemDto, bindingResult);
+            validationServiceImpl.checkPrescriptionItem(prescriptionItemDto, bindingResult);
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("hasError", true);
             model.addAttribute("error", "Error in item id:" + prescriptionItemDto.getItemId());
             return "item";
         } else {
-            prescriptionItemService.updatePrescriptionItem(prescriptionItemDto);
+            prescriptionItemServiceImpl.updatePrescriptionItem(prescriptionItemDto, userDetails);
+            senderServiceImpl.sendEvents();
             return "redirect:/patient/" + id + "/prescription/" + num;
         }
     }

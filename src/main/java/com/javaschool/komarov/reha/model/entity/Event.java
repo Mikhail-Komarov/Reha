@@ -37,4 +37,6 @@ public class Event {
     private LocalDateTime dateTime;
     @ManyToOne
     private PrescriptionItem prescriptionItem;
+    @ManyToOne
+    private Employee employee;
 }

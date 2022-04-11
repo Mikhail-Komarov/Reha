@@ -1,4 +1,4 @@
-package com.javaschool.komarov.reha.dto;
+package com.javaschool.komarov.reha.model.dto;
 
 import com.javaschool.komarov.reha.model.PatientStatus;
 import lombok.AllArgsConstructor;

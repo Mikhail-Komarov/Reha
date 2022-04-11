@@ -8,7 +8,8 @@ import java.util.stream.Stream;
 
 public enum Role {
     NURSE(Stream.of(Permission.EMPLOYEE_READ).collect(Collectors.toSet())),
-    DOCTOR(Stream.of(Permission.EMPLOYEE_READ, Permission.EMPLOYEE_WRITE).collect(Collectors.toSet()));
+    DOCTOR(Stream.of(Permission.EMPLOYEE_READ, Permission.EMPLOYEE_WRITE).collect(Collectors.toSet())),
+    CHIEF(Stream.of(Permission.EMPLOYEE_ADD, Permission.EMPLOYEE_READ, Permission.EMPLOYEE_WRITE).collect(Collectors.toSet()));
 
     private final Set<Permission> permissions;
 

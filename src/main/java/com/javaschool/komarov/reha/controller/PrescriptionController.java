@@ -1,10 +1,10 @@
 package com.javaschool.komarov.reha.controller;
 
-import com.javaschool.komarov.reha.dto.PatientDto;
-import com.javaschool.komarov.reha.dto.PrescriptionDto;
-import com.javaschool.komarov.reha.service.PatientService;
-import com.javaschool.komarov.reha.service.PrescriptionService;
-import com.javaschool.komarov.reha.service.ValidationService;
+import com.javaschool.komarov.reha.model.dto.PatientDto;
+import com.javaschool.komarov.reha.model.dto.PrescriptionDto;
+import com.javaschool.komarov.reha.service.impl.PatientServiceImpl;
+import com.javaschool.komarov.reha.service.impl.PrescriptionServiceImpl;
+import com.javaschool.komarov.reha.service.impl.ValidationServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,19 +19,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/patient/{id}")
 public class PrescriptionController {
-    private final PatientService patientService;
-    private final PrescriptionService prescriptionService;
-    private final ValidationService validationService;
+    private final PatientServiceImpl patientServiceImpl;
+    private final PrescriptionServiceImpl prescriptionServiceImpl;
+    private final ValidationServiceImpl validationServiceImpl;
 
-    public PrescriptionController(PatientService patientService, PrescriptionService prescriptionService, ValidationService validationService) {
-        this.patientService = patientService;
-        this.prescriptionService = prescriptionService;
-        this.validationService = validationService;
+    public PrescriptionController(PatientServiceImpl patientServiceImpl, PrescriptionServiceImpl prescriptionServiceImpl, ValidationServiceImpl validationServiceImpl) {
+        this.patientServiceImpl = patientServiceImpl;
+        this.prescriptionServiceImpl = prescriptionServiceImpl;
+        this.validationServiceImpl = validationServiceImpl;
     }
 
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
-        return patientService.getPatientById(id);
+        return patientServiceImpl.getPatientDTOById(id);
     }
 
     @ModelAttribute("updatedPatient")
@@ -41,7 +41,7 @@ public class PrescriptionController {
 
     @ModelAttribute("prescriptions")
     public Iterable<PrescriptionDto> prescriptions(@PathVariable("id") long id) {
-        return prescriptionService.getPrescriptionByPatientId(id);
+        return prescriptionServiceImpl.getPrescriptionsDTOByPatientId(id);
     }
 
     @ModelAttribute("newPrescription")
@@ -60,11 +60,11 @@ public class PrescriptionController {
     public String addPrescription(@PathVariable("id") long id, @AuthenticationPrincipal UserDetails userDetails,
                                   @ModelAttribute("newPrescription") PrescriptionDto prescriptionDto,
                                   BindingResult bindingResult) {
-        validationService.checkPrescription(prescriptionDto, bindingResult);
+        validationServiceImpl.checkPrescription(prescriptionDto, bindingResult, id, userDetails);
         if (bindingResult.hasErrors()) {
             return "prescription";
         } else {
-            prescriptionService.savePrescription(prescriptionDto, userDetails, id);
+            prescriptionServiceImpl.savePrescription(prescriptionDto, userDetails, id);
             return "redirect:/patient/" + id + "/prescription";
         }
     }
@@ -74,11 +74,11 @@ public class PrescriptionController {
     public String updatePatientStatus(@PathVariable("id") long id,
                                       @ModelAttribute("updatedPatient") PatientDto patientDto,
                                       BindingResult bindingResult) {
-        validationService.checkPatientStatus(patientDto, bindingResult);
+        validationServiceImpl.checkPatientStatus(patientDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "prescription";
         } else {
-            patientService.updatePatientStatus(patientDto);
+            patientServiceImpl.updatePatientStatus(patientDto);
             return "redirect:/patient/" + id + "/prescription";
         }
     }

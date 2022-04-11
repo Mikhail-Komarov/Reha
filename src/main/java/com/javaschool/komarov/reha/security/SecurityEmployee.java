@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.security;
 
-import com.javaschool.komarov.reha.dto.EmployeeDto;
+import com.javaschool.komarov.reha.model.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

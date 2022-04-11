@@ -37,5 +37,7 @@ public class Employee {
     private Set<Prescription> prescriptions;
     @OneToMany(mappedBy = "employee")
     private Set<PrescriptionItem> prescriptionItems;
+    @OneToMany(mappedBy = "employee")
+    private Set<Event> events;
 
 }

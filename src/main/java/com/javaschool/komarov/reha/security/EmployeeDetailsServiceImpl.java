@@ -1,6 +1,6 @@
 package com.javaschool.komarov.reha.security;
 
-import com.javaschool.komarov.reha.dto.EmployeeDto;
+import com.javaschool.komarov.reha.model.dto.EmployeeDto;
 import com.javaschool.komarov.reha.mapper.EmployeeMapper;
 import com.javaschool.komarov.reha.repository.HospitalEmployeeRepo;
 import org.springframework.security.core.userdetails.UserDetails;

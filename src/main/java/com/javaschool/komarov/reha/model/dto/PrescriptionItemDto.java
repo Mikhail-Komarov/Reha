@@ -1,4 +1,4 @@
-package com.javaschool.komarov.reha.dto;
+package com.javaschool.komarov.reha.model.dto;
 
 import com.javaschool.komarov.reha.model.PrescriptionItemStatus;
 import lombok.AllArgsConstructor;
@@ -25,13 +25,15 @@ public class PrescriptionItemDto {
     private String timePattern;
     @DateTimeFormat(pattern = "dd.MM.yy")
     private List<LocalDate> date;
+    private String dates;
+    private String times;
     @DateTimeFormat(pattern = "H:mm")
     private List<LocalTime> time;
     private PrescriptionItemStatus prescriptionItemStatus;
     private String cancellationReason;
-    private EmployeeDto employee;
-    private TherapyDto therapy;
-    private PrescriptionDto prescription;
+    private String doctorName;
+    private String therapyName;
+    private String diagnosis;
     private long employeeId;
     private long therapyId;
     private long prescriptionId;

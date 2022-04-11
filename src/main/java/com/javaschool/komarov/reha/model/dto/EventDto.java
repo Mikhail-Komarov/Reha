@@ -1,4 +1,4 @@
-package com.javaschool.komarov.reha.dto;
+package com.javaschool.komarov.reha.model.dto;
 
 import com.javaschool.komarov.reha.model.EventStatus;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,12 @@ public class EventDto {
     private String cancellationReason;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
-    private PrescriptionItemDto prescriptionItem;
+    private String patientName;
+    private String patientInsurance;
+    private String therapy;
+    private Integer therapyDose;
+    private String doctorName;
     private Long prescriptionItemId;
+    private String executorName;
 
 }

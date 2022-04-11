@@ -1,4 +1,4 @@
-package com.javaschool.komarov.reha.dto;
+package com.javaschool.komarov.reha.model.dto;
 
 import com.javaschool.komarov.reha.model.Role;
 import lombok.Getter;
@@ -13,5 +13,4 @@ public class EmployeeDto {
     private String login;
     private String password;
     private Role role;
-
 }

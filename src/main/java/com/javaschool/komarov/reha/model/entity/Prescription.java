@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -34,6 +36,8 @@ public class Prescription {
     private Patient patient;
     @ManyToOne
     private Employee employee;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate appointmentDate;
     @OneToMany(mappedBy = "prescription")
     private Set<PrescriptionItem> prescriptionItems;
 
