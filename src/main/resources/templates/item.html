@@ -45,7 +45,7 @@
         <p class="card-text" th:text="${'First name: '+ patientInfo.firstName}"></p>
         <p class="card-text" th:text="${'Last name: '+ patientInfo.lastName}"></p>
         <p class="card-text" th:text="${'Insurance number: '+ patientInfo.healthInsurance}"></p>
-        <p class="card-text" th:text="${'Status: '+ patientInfo.status}"></p>
+        <p class="card-text" th:text="${'Status: '+ patientInfo.status.toString()}"></p>
         <p class="card-text" th:text="${'diagnosis: '+ prescriptionInfo.diagnosis}"></p>
         <p class="card-text" th:text="${'doctor: '+ prescriptionInfo.doctorName}"></p>
     </div>
