@@ -38,28 +38,34 @@
         </div>
     </div>
 </nav>
-<div class="card" style="width: 12rem;">
-    <img src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
-    <div class="card-body">
-        <h5 class="card-title">Patient's info:</h5>
-        <p class="card-text" th:text="${'First name: '+ patientInfo.firstName}"></p>
-        <p class="card-text" th:text="${'Last name: '+ patientInfo.lastName}"></p>
-        <p class="card-text" th:text="${'Insurance number: '+ patientInfo.healthInsurance}"></p>
-        <p class="card-text" th:text="${'Status: '+ patientInfo.status.toString()}"></p>
-        <p class="card-text" th:text="${'diagnosis: '+ prescriptionInfo.diagnosis}"></p>
-        <p class="card-text" th:text="${'doctor: '+ prescriptionInfo.doctorName}"></p>
+<div class="container mt-5">
+    <div class="row bg-lightown">
+        <div class="col-md-4 bg-own col-sm-12">
+            <img style="width: 240px" src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
+        </div>
+        <div class="col-md-6 col-sm-8">
+            <i class="fa fa-quote-left"></i>
+            <h2>Patient info</h2>
+            <ul class="bio">
+                <li th:text="${'First name: '+ patientInfo.firstName}"></li>
+                <li th:text="${'Last name: '+ patientInfo.lastName}"></li>
+                <li th:text="${'Insurance number: '+ patientInfo.healthInsurance}"></li>
+                <li th:text="${'Patient status: '+ patientInfo.status.toString()}"></li>
+                <li th:text="${'Diagnosis: '+ prescriptionInfo.diagnosis}"></li>
+                <li th:text="${'Doctor: '+ prescriptionInfo.doctorName}"></li>
+            </ul>
+            <div>
+                <button sec:authorize="hasAnyAuthority('employee:write')" class="btn btn-outline-dark"
+                        type="button"><a style="" class="modalbox btn lk"
+                                         href="#CreationModal" data-toggle="modal"
+                                         sec:authorize="hasAnyAuthority('employee:write')">
+                    Add item</a></button>
+            </div>
+            <br>
+            <div class="alert alert-warning col-md-3" style="width: 300px; align-items: center" role="alert" th:if="${hasError}" th:text="${error}"></div>
+        </div>
     </div>
 </div>
-<br>
-<div>
-    <button sec:authorize="hasAnyAuthority('employee:write')" class="btn btn-outline-dark"
-            type="button"><a style="" class="modalbox btn lk"
-                             href="#CreationModal" data-toggle="modal"
-                             sec:authorize="hasAnyAuthority('employee:write')">
-        Add item</a></button>
-</div>
-<br>
-<div class="alert alert-warning col-md-3" role="alert" th:if="${hasError}" th:text="${error}"></div>
 <div class="card text-center">
     <div class="card-body">
         <br/>

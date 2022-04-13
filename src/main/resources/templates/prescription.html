@@ -36,42 +36,45 @@
         </div>
     </div>
 </nav>
-<div class="card" style="width: 12rem;" th:object="${patientInfo}">
-    <img src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
-    <div class="card-body">
-        <h5 class="card-title">Patient's info:</h5>
-        <p class="card-text" th:text="'First name: '+ *{firstName}"></p>
-        <p class="card-text" th:text="'Last name: '+ *{lastName}"></p>
-        <p class="card-text" th:text="'Insurance number: '+ *{healthInsurance}"></p>
-        <p class="card-text" th:text="'Status: '+ *{status}"></p>
-        <div>
-            <div sec:authorize="hasAnyAuthority('employee:write')">
-                <form name="status" th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/update'}" th:object="${updatedPatient}">
+<div class="container mt-5">
+    <div class="row bg-lightown">
+        <div class="col-md-4 bg-own col-sm-12">
+            <img style="width: 240px" src="https://gazo.ru/upload/iblock/3ff/3ff3fbd5c63139765de789ed11f64ebe.png" class="card-img-top" alt="...">
+        </div>
+        <div class="col-md-6 col-sm-8">
+            <i class="fa fa-quote-left"></i>
+            <h2>Patient info</h2>
+            <ul class="bio" th:object="${patientInfo}">
+                <li th:text="'First name: '+ *{firstName}"></li>
+                <li th:text="'Last name: '+ *{lastName}"></li>
+                <li th:text="'Insurance number: '+ *{healthInsurance}"></li>
+                <li th:text="'Patient status: '+ *{status}"></li>
+            </ul>
+            <div sec:authorize="hasAnyAuthority('employee:write')" th:object="${patientInfo}">
+                <form  class="form-inline" name="status" th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/update'}" th:object="${updatedPatient}">
+                    <label> Set status</label>
                     <select th:class="${#fields.hasErrors('status')} ? 'celect-control is-invalid'" th:field="*{status}">
                         <option value="IS_TREATED" selected>Is treated</option>
                         <option value="DISCHARGED">Discharged</option>
                     </select>
-                    <br>
                     <div class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{status}"></div>
                     <button class="btn btn-outline-dark" type="submit">Change status</button>
+                </form>
+            </div>
+            <div style="margin-top: 10px" sec:authorize="hasAnyAuthority('employee:write')">
+                <form class="form-inline" th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/add'}" th:object="${newPrescription}">
+                    <label for="validationDiagnosis" class="form-label">Set diagnosis</label>
+                    <input th:class="${#fields.hasErrors('diagnosis')} ? 'form-control is-invalid'"
+                           type="text" th:field="*{diagnosis}" placeholder="diagnosis" title="maximum of 60 characters"
+                           id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" >
+                    <div id="validationDiagnosisFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{diagnosis}"></div>
+                    <button class="btn btn-outline-dark" type="submit">Add diagnosis</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 <div class="card-body">
-    <div sec:authorize="hasAnyAuthority('employee:write')">
-        <form th:method="POST" th:action="@{'/patient/'+ ${patientInfo.id} + '/prescription/add'}" th:object="${newPrescription}">
-            <div class="col-md-6">
-                <label for="validationDiagnosis" class="form-label"></label>
-                <input th:class="${#fields.hasErrors('diagnosis')} ? 'form-control is-invalid'"
-                       type="text" th:field="*{diagnosis}" placeholder="diagnosis" title="maximum of 60 characters"
-                       id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" >
-                <div id="validationDiagnosisFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{diagnosis}"></div>
-                <button class="btn btn-outline-dark" type="submit">Add diagnosis</button>
-            </div>
-        </form>
-    </div>
     <div class="card text-center">
         <div>Prescriptions:</div>
         <table class="table table-striped table-hover table-bordered" id="table-id">
