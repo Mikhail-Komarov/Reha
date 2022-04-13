@@ -21,7 +21,7 @@ public class EmployeeDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         EmployeeDto employeeDto = employeeMapper.toDTO(hospitalEmployeeRepo.findByLogin(login).orElseThrow(() ->
-                new UsernameNotFoundException("User doesn't exists")));
+                new UsernameNotFoundException("User does not exists")));
         return SecurityEmployee.fromEmployee(employeeDto);
     }
 }

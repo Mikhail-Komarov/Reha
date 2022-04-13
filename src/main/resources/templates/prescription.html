@@ -66,7 +66,7 @@
                 <label for="validationDiagnosis" class="form-label"></label>
                 <input th:class="${#fields.hasErrors('diagnosis')} ? 'form-control is-invalid'"
                        type="text" th:field="*{diagnosis}" placeholder="diagnosis" title="maximum of 60 characters"
-                       id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" required>
+                       id="validationDiagnosis" aria-describedby="validationDiagnosisFeedback" >
                 <div id="validationDiagnosisFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{diagnosis}"></div>
                 <button class="btn btn-outline-dark" type="submit">Add diagnosis</button>
             </div>

@@ -77,8 +77,7 @@ public class ValidationServiceImpl implements ValidationService {
                 bindingResult.addError(new FieldError("newTherapy", "name", "Therapy name should not be null"));
             } else if (!therapyDto.getName().matches("^[a-zA-Z][a-zA-Z]{1,20}$")) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "The use of numbers and special characters is not allowed"));
-            }
-            else if (therapyServiceImpl.therapyIsExist(therapyDto.getName())) {
+            } else if (therapyServiceImpl.therapyIsExist(therapyDto.getName())) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "Therapy with this name is exist"));
             }
 
@@ -214,131 +213,140 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public void checkPrescriptionItem(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
-        Integer dose;
-        LocalDate startTreatment = prescriptionItemDto.getStartTreatment();
-        LocalDate endTreatment = prescriptionItemDto.getEndTreatment();
-        if (prescriptionItemDto.getDates() != null) {
-            checkDateParser(prescriptionItemDto, bindingResult);
-        }
-        if (prescriptionItemDto.getTimes() != null) {
-            checkTimeParser(prescriptionItemDto, bindingResult);
-        }
-        List<LocalDate> date = prescriptionItemDto.getDate();
-        List<LocalTime> time = prescriptionItemDto.getTime();
-        PrescriptionItemStatus prescriptionItemStatus = prescriptionItemDto.getPrescriptionItemStatus();
-        String cancellationReason = prescriptionItemDto.getCancellationReason();
-        long therapyId = prescriptionItemDto.getTherapyId();
-
-        Optional<PrescriptionItem> oldItem;
-        if (prescriptionItemDto.getItemId() != null) {
-            oldItem = prescriptionItemServiceImpl.getPrescriptionItemById(prescriptionItemDto.getItemId());
+        if (prescriptionItemDto == null) {
+            bindingResult.addError(new FieldError("newItem", "itemId", "Item should not be empty!"));
         } else {
-            oldItem = Optional.empty();
-        }
-        PrescriptionItemStatus oldStatus = null;
+            Integer dose;
+            LocalDate startTreatment = prescriptionItemDto.getStartTreatment();
+            LocalDate endTreatment = prescriptionItemDto.getEndTreatment();
+            if (prescriptionItemDto.getDates() != null) {
+                checkDateParser(prescriptionItemDto, bindingResult);
+            }
+            if (prescriptionItemDto.getTimes() != null) {
+                checkTimeParser(prescriptionItemDto, bindingResult);
+            }
+            List<LocalDate> date = prescriptionItemDto.getDate();
+            List<LocalTime> time = prescriptionItemDto.getTime();
+            PrescriptionItemStatus prescriptionItemStatus = prescriptionItemDto.getPrescriptionItemStatus();
+            String cancellationReason = prescriptionItemDto.getCancellationReason();
 
-        Optional<Therapy> therapy = therapyServiceImpl.getTherapyById(therapyId);
-
-        if (prescriptionItemDto.getItemId() != null && oldItem.isPresent()) {
-            oldStatus = oldItem.get().getPrescriptionItemStatus();
-            therapy = Optional.of(oldItem.get().getTherapy());
-        }
-        dose = prescriptionItemDto.getDose();
-        LocalDateTime maxEventDate;
-        LocalDateTime minEventDate;
-        List<LocalDateTime> dateTimeList = null;
-        if (prescriptionItemDto.getDate() != null && prescriptionItemDto.getTime() != null) {
-            dateTimeList = prescriptionItemServiceImpl.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
-        }
-        if (date != null && !oldItem.isPresent() && dateTimeList != null) {
-            if (dateTimeList.stream().max(Comparator.naturalOrder()).isPresent()) {
-                maxEventDate = dateTimeList.stream().max(Comparator.naturalOrder()).get();
-                minEventDate = dateTimeList.stream().min(Comparator.naturalOrder()).get();
+            Optional<PrescriptionItem> oldItem;
+            if (prescriptionItemDto.getItemId() != null) {
+                oldItem = prescriptionItemServiceImpl.getPrescriptionItemById(prescriptionItemDto.getItemId());
             } else {
-                maxEventDate = LocalDateTime.now();
-                minEventDate = LocalDateTime.now();
+                oldItem = Optional.empty();
+            }
+            PrescriptionItemStatus oldStatus = null;
+
+            long therapyId = prescriptionItemDto.getTherapyId();
+            Optional<Therapy> therapy = Optional.empty();
+
+            if (therapyId > 0) {
+                therapy = therapyServiceImpl.getTherapyById(therapyId);
             }
 
-            if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
-                    || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
-                    || prescriptionItemDto.getStartTreatment().isAfter(minEventDate.toLocalDate())
-                    || prescriptionItemDto.getEndTreatment().isBefore(prescriptionItemDto.getStartTreatment())
-                    || prescriptionItemDto.getEndTreatment().isBefore(maxEventDate.toLocalDate())) {
-                bindingResult.addError(new FieldError("newItem", "startTreatment", "Illegal date statement!"));
-                bindingResult.addError(new FieldError("newItem", "endTreatment", "Illegal date statement!"));
+            if (prescriptionItemDto.getItemId() != null && oldItem.isPresent()) {
+                oldStatus = oldItem.get().getPrescriptionItemStatus();
+                therapy = Optional.of(oldItem.get().getTherapy());
+            }
+            dose = prescriptionItemDto.getDose();
+            LocalDateTime maxEventDate;
+            LocalDateTime minEventDate;
+            List<LocalDateTime> dateTimeList = null;
+            if (prescriptionItemDto.getDate() != null && prescriptionItemDto.getTime() != null) {
+                dateTimeList = prescriptionItemServiceImpl.createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime());
+            }
+            if (date != null && !oldItem.isPresent() && dateTimeList != null) {
+                if (dateTimeList.stream().max(Comparator.naturalOrder()).isPresent()) {
+                    maxEventDate = dateTimeList.stream().max(Comparator.naturalOrder()).get();
+                    minEventDate = dateTimeList.stream().min(Comparator.naturalOrder()).get();
+                } else {
+                    maxEventDate = LocalDateTime.now();
+                    minEventDate = LocalDateTime.now();
+                }
+
+                if (prescriptionItemDto.getStartTreatment().isBefore(LocalDate.now())
+                        || prescriptionItemDto.getStartTreatment().isAfter(prescriptionItemDto.getEndTreatment())
+                        || prescriptionItemDto.getStartTreatment().isAfter(minEventDate.toLocalDate())
+                        || prescriptionItemDto.getEndTreatment().isBefore(prescriptionItemDto.getStartTreatment())
+                        || prescriptionItemDto.getEndTreatment().isBefore(maxEventDate.toLocalDate())) {
+                    bindingResult.addError(new FieldError("newItem", "startTreatment", "Illegal date statement!"));
+                    bindingResult.addError(new FieldError("newItem", "endTreatment", "Illegal date statement!"));
+                }
+
+                if (minEventDate.isBefore(LocalDateTime.now())) {
+                    bindingResult.addError(new FieldError("newItem", "time", "It is not possible to assign an event earlier than the current moment"));
+                    prescriptionItemDto.setTimes(null);
+                }
             }
 
-            if (minEventDate.isBefore(LocalDateTime.now())) {
-                bindingResult.addError(new FieldError("newItem", "time", "It is not possible to assign an event earlier than the current moment"));
-                prescriptionItemDto.setTimes(null);
+            if (!oldItem.isPresent() && dose == null && therapy.isPresent() && !therapy.get().getTherapyType().equals(TherapyType.PROCEDURE)) {
+                bindingResult.addError(new FieldError("newItem", "dose", "Set the dose"));
             }
-        }
 
-        if (!oldItem.isPresent() && dose == null && therapy.isPresent() && !therapy.get().getTherapyType().equals(TherapyType.PROCEDURE)) {
-            bindingResult.addError(new FieldError("newItem", "dose", "Set the dose"));
-        }
-
-        if (therapy.isPresent() && !oldItem.isPresent()) {
-            if ((dose == null || dose <= 0) && therapy.get().getTherapyType().equals(TherapyType.MEDICINE)) {
-                bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
+            if (therapy.isPresent() && !oldItem.isPresent()) {
+                if ((dose == null || dose <= 0) && therapy.get().getTherapyType().equals(TherapyType.MEDICINE)) {
+                    bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
+                }
+                if (dose != null && therapy.get().getTherapyType().equals(TherapyType.PROCEDURE)) {
+                    bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
+                }
             }
-            if (dose != null && therapy.get().getTherapyType().equals(TherapyType.PROCEDURE)) {
-                bindingResult.addError(new FieldError("newItem", "dose", "Invalid dose"));
+
+            if (oldItem.isPresent()) {
+                if ((dose != null) && !oldItem.get().getTherapy().getTherapyType().equals(TherapyType.MEDICINE)) {
+                    bindingResult.addError(new FieldError("updateItem", "dose", "Dose available only for medicines"));
+                }
             }
-        }
 
-        if (oldItem.isPresent()) {
-            if ((dose != null) && !oldItem.get().getTherapy().getTherapyType().equals(TherapyType.MEDICINE)) {
-                bindingResult.addError(new FieldError("updateItem", "dose", "Dose available only for medicines"));
-            }
-        }
-
-        if (oldItem.isPresent() && oldStatus != null && oldStatus.equals(PrescriptionItemStatus.CANCELLED)) {
-            bindingResult.addError(new FieldError("updateItem", "prescriptionItemStatus", "Changes to the cancelled prescription are not available"));
-        }
-
-        if (prescriptionItemStatus != null && prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)) {
-            if (dose != null || startTreatment != null || endTreatment != null || (date != null && !date.isEmpty()) || (time != null && !time.isEmpty())) {
+            if (oldItem.isPresent() && oldStatus != null && oldStatus.equals(PrescriptionItemStatus.CANCELLED)) {
                 bindingResult.addError(new FieldError("updateItem", "prescriptionItemStatus", "Changes to the cancelled prescription are not available"));
             }
-        }
 
-        if (prescriptionItemStatus != null && !oldItem.isPresent()) {
-            if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)
-                    && (dose != null || startTreatment != null || endTreatment != null
-                    || date != null || time != null || therapy.isPresent())) {
-                bindingResult.addError(new FieldError("newItem", "prescriptionItemStatus", "Only the reason for cancellation field is available for this status"));
+            if (prescriptionItemStatus != null && prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)) {
+                if (dose != null || startTreatment != null || endTreatment != null || (date != null && !date.isEmpty()) || (time != null && !time.isEmpty())) {
+                    bindingResult.addError(new FieldError("updateItem", "prescriptionItemStatus", "Changes to the cancelled prescription are not available"));
+                }
             }
-        }
 
-        if (prescriptionItemStatus != null && oldItem.isPresent()) {
-            if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED) &&
-                    (cancellationReason == null || cancellationReason.isEmpty())) {
-                bindingResult.addError(new FieldError("updateItem", "cancellationReason", "Cancellation reason should not be empty"));
+            if (prescriptionItemStatus != null && !oldItem.isPresent()) {
+                if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED)
+                        && (dose != null || startTreatment != null || endTreatment != null
+                        || date != null || time != null || therapy.isPresent())) {
+                    bindingResult.addError(new FieldError("newItem", "prescriptionItemStatus", "Only the reason for cancellation field is available for this status"));
+                }
             }
-        }
 
-        if (!oldItem.isPresent() && startTreatment == null) {
-            bindingResult.addError(new FieldError("newItem", "startTreatment", "Start treatment should not be empty!"));
-        }
+            if (prescriptionItemStatus != null && oldItem.isPresent()) {
+                if (prescriptionItemStatus.equals(PrescriptionItemStatus.CANCELLED) &&
+                        (cancellationReason == null || cancellationReason.isEmpty())) {
+                    bindingResult.addError(new FieldError("updateItem", "cancellationReason", "Cancellation reason should not be empty"));
+                }
+            }
 
-        if (!oldItem.isPresent() && endTreatment == null) {
-            bindingResult.addError(new FieldError("newItem", "endTreatment", "Start treatment should not be empty!"));
-        }
+            if (!oldItem.isPresent() && startTreatment == null) {
+                bindingResult.addError(new FieldError("newItem", "startTreatment", "Start treatment should not be empty!"));
+            }
 
-        if (!oldItem.isPresent() && (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty())) {
-            bindingResult.addError(new FieldError("newItem", "date", "Date pattern should not be empty!"));
-        }
+            if (!oldItem.isPresent() && endTreatment == null) {
+                bindingResult.addError(new FieldError("newItem", "endTreatment", "End treatment should not be empty!"));
+            }
 
-        if (!oldItem.isPresent() && (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty())) {
-            bindingResult.addError(new FieldError("newItem", "time", "Time pattern should not be empty!"));
-        }
+            if (!oldItem.isPresent() && (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty())) {
+                bindingResult.addError(new FieldError("newItem", "date", "Date pattern should not be empty!"));
+            }
 
-        if (!oldItem.isPresent() && !therapy.isPresent()) {
-            bindingResult.addError(new FieldError("newItem", "therapyId", "Therapy should not be empty!"));
-        }
-        if (!bindingResult.hasErrors()) {
-            log.info("The item's check was successful " + prescriptionItemDto);
+            if (!oldItem.isPresent() && (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty())) {
+                bindingResult.addError(new FieldError("newItem", "time", "Time pattern should not be empty!"));
+            }
+
+            if (!oldItem.isPresent() && !therapy.isPresent()) {
+                bindingResult.addError(new FieldError("newItem", "therapyId", "Therapy should not be empty!"));
+            }
+            if (!bindingResult.hasErrors()) {
+                log.info("The item's check was successful " + prescriptionItemDto);
+            }
+
         }
     }
 
@@ -374,14 +382,16 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public void checkPatternUpdate(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
-        PrescriptionItemDto prescriptionItem;
-        try {
-            prescriptionItem = prescriptionItemServiceImpl.getPrescriptionItemDTOById(prescriptionItemDto.getItemId());
-        } catch (RuntimeException e) {
-            bindingResult.addError(new FieldError("updateItem", "itemId", "Prescription is non-existent"));
-            prescriptionItem = null;
+        Optional<PrescriptionItem> prescriptionItem = Optional.empty();
+        if (prescriptionItemDto == null) {
+            bindingResult.addError(new FieldError("updateItem", "itemID", "Item should not be empty"));
         }
-        if (prescriptionItem != null) {
+        else {
+            prescriptionItem = prescriptionItemServiceImpl.getPrescriptionItemById(prescriptionItemDto.getItemId());
+        }
+        if (!prescriptionItem.isPresent()) {
+            bindingResult.addError(new FieldError("updateItem", "itemID", "Item does not exist"));
+        } else {
             Set<EventDto> eventsById = StreamSupport
                     .stream(eventServiceImpl.getEventDtoByPrescriptionItemId(prescriptionItemDto.getPrescriptionId())
                             .spliterator(), false)
@@ -412,7 +422,7 @@ public class ValidationServiceImpl implements ValidationService {
             }
 
             if (numberOfDays * perDay > 0
-                    && prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.PRESCRIBED)) {
+                    && prescriptionItem.get().getPrescriptionItemStatus().equals(PrescriptionItemStatus.PRESCRIBED)) {
 
                 for (int i = 0; i < numberOfDays; i++) {
                     for (int j = 0; j < perDay; j++) {
@@ -428,8 +438,8 @@ public class ValidationServiceImpl implements ValidationService {
             LocalDateTime maxCompletedEventDate = LocalDateTime.now();
             LocalDateTime minCompletedEventDate = LocalDateTime.now();
 
-            LocalDate endTreatment = prescriptionItem.getEndTreatment();
-            LocalDate startTreatment = prescriptionItem.getStartTreatment();
+            LocalDate endTreatment = prescriptionItem.get().getEndTreatment();
+            LocalDate startTreatment = prescriptionItem.get().getStartTreatment();
 
             if (prescriptionItemDto.getStartTreatment() != null) {
                 startTreatment = prescriptionItemDto.getStartTreatment();
@@ -454,13 +464,12 @@ public class ValidationServiceImpl implements ValidationService {
             }
 
             if (!newEventDateList.isEmpty() && minEventDate.isBefore(LocalDateTime.now())) {
-
                 bindingResult.addError(new FieldError("updateItem", "time", "It is not possible to assign an event earlier than the current moment"));
             }
 
             if ((prescriptionItemDto.getStartTreatment() != null
                     || prescriptionItemDto.getEndTreatment() != null)
-                    && !prescriptionItem.getPrescriptionItemStatus().equals(PrescriptionItemStatus.CANCELLED)) {
+                    && !prescriptionItem.get().getPrescriptionItemStatus().equals(PrescriptionItemStatus.CANCELLED)) {
 
                 if (newEventDateList.isEmpty() && (startTreatment.isAfter(endTreatment)
                         || startTreatment.isBefore(LocalDate.now())

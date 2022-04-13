@@ -81,7 +81,7 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
         PrescriptionItem newItemDto = prescriptionItemRepo.saveAndFlush(prescriptionItem);
         patientServiceImpl.setStatusIsTreated(prescriptionItem.getPrescription().getPatient());
         eventServiceImpl.createEvent(newItemDto, createDateTimeListForEvents(prescriptionItemDto.getDate(), prescriptionItemDto.getTime()), employeeDTO);
-        log.info("Dr. " + employeeDTO + " added item to patient id " + prescriptionItem.getPrescription().getPatient().getId());
+        log.info("Dr. " + employeeDTO.getLastName() + " added item to patient id " + prescriptionItem.getPrescription().getPatient().getId());
     }
 
     @Override

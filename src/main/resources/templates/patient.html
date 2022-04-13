@@ -43,21 +43,21 @@
                 <label for="validationFirstName" class="form-label">First name</label>
                 <input th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid'"
                        type="text" th:field="*{firstName}" name="firstName" placeholder="first name" title="the use of numbers and special characters is not allowed"
-                       id="validationFirstName" aria-describedby="validationFirstNameFeedback" required>
+                       id="validationFirstName" aria-describedby="validationFirstNameFeedback" >
                 <div id="validationFirstNameFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{firstName}"></div>
             </div>
             <div class="col-md-6">
                 <label for="validationLastName" class="form-label">Last name</label>
                 <input th:class="${#fields.hasErrors('lastName')} ? 'form-control is-invalid'"
                        type="text" th:field="*{lastName}" name="lastName" placeholder="last name" title="the use of numbers and special characters is not allowed"
-                       id="validationLastName" aria-describedby="validationLastNameFeedback" required>
+                       id="validationLastName" aria-describedby="validationLastNameFeedback" >
                 <div id="validationLastNameFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{lastName}"></div>
             </div>
             <div class="col-md-6">
                 <label for="validationInsurance" class="form-label">Insurance number</label>
                 <input th:class="${#fields.hasErrors('healthInsurance')} ? 'form-control is-invalid'"
                        type="text" th:field="*{healthInsurance}" name="healthInsurance" placeholder="insurance number"
-                       title="8 characters, numbers only" id="validationInsurance" aria-describedby="validationInsuranceFeedback" required>
+                       title="8 characters, numbers only" id="validationInsurance" aria-describedby="validationInsuranceFeedback" >
                 <div id="validationInsuranceFeedback" class="invalid-feedback" th:if="${#fields.hasErrors()}" th:errorclass="error" th:errors="*{healthInsurance}"></div>
             </div>
             <button class="btn btn-outline-dark" type="submit">Add patient</button>

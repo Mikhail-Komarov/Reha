@@ -100,7 +100,7 @@ public class EventServiceImpl implements EventService {
                 && eventRepo.findById(eventDto.getId()).isPresent()
                 && !eventDto.getCancellationReason().isEmpty()
                 && eventDto.getEventStatus().equals(EventStatus.CANCELLED)
-                && eventRepo.findById(eventDto.getId()).get().getEventStatus().equals(EventStatus.SCHEDULED)) {
+                && event.getEventStatus().equals(EventStatus.SCHEDULED)) {
             event.setCancellationReason(eventDto.getCancellationReason());
             event.setEmployee(employeeMapper.toModel(employee));
             event.setEventStatus(eventDto.getEventStatus());
@@ -129,18 +129,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public void updateEventStatus(Long id, String cancellationReason, EmployeeDto employee) {
         Set<Event> events = eventRepo.findActiveEventByPrescriptionItemId(id);
-        if (events.isEmpty()) {
-            return;
-        }
-        for (Event event : events) {
-            if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
-                event.setEventStatus(EventStatus.CANCELLED);
-                event.setCancellationReason(cancellationReason);
-                event.setEmployee(employeeMapper.toModel(employee));
+        if(!events.isEmpty()) {
+            for (Event event : events) {
+                if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
+                    event.setEventStatus(EventStatus.CANCELLED);
+                    event.setCancellationReason(cancellationReason);
+                    event.setEmployee(employeeMapper.toModel(employee));
+                }
             }
+            eventRepo.saveAllAndFlush(events);
+            log.info("Events status were updated: " + events.size() + " events");
         }
-        eventRepo.saveAllAndFlush(events);
-        log.info("Events status were updated: " + events.size() + " events");
     }
 
     @Override
