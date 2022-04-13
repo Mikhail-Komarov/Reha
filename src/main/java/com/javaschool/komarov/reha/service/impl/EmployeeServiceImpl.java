@@ -5,19 +5,16 @@ import com.javaschool.komarov.reha.model.dto.EmployeeDto;
 import com.javaschool.komarov.reha.model.entity.Employee;
 import com.javaschool.komarov.reha.repository.HospitalEmployeeRepo;
 import com.javaschool.komarov.reha.service.api.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final HospitalEmployeeRepo employeeRepo;
-
-    public EmployeeServiceImpl(EmployeeMapper employeeMapper, HospitalEmployeeRepo employeeRepo) {
-        this.employeeMapper = employeeMapper;
-        this.employeeRepo = employeeRepo;
-    }
 
     @Override
     public EmployeeDto getEmployeeDTOByLogin(String login) {

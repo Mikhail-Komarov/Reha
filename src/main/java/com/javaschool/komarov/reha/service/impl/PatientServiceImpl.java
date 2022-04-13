@@ -6,22 +6,20 @@ import com.javaschool.komarov.reha.model.PatientStatus;
 import com.javaschool.komarov.reha.model.dto.PatientDto;
 import com.javaschool.komarov.reha.model.entity.Patient;
 import com.javaschool.komarov.reha.repository.PatientRepo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class PatientServiceImpl implements com.javaschool.komarov.reha.service.api.PatientServiceImpl {
     private final PatientMapper patientMapper;
     private final PatientRepo patientRepo;
-
-    public PatientServiceImpl(PatientMapper patientMapper, PatientRepo patientRepo) {
-        this.patientMapper = patientMapper;
-        this.patientRepo = patientRepo;
-    }
 
     @Override
     public boolean checkPatientInDb(String healthInsurance) {
@@ -34,6 +32,7 @@ public class PatientServiceImpl implements com.javaschool.komarov.reha.service.a
     }
 
     @Override
+    @Transactional
     public void savePatient(PatientDto patientDto) {
         patientDto.setStatus(PatientStatus.UNDEFINED);
         patientRepo.save(patientMapper.toModel(patientDto));
@@ -52,6 +51,7 @@ public class PatientServiceImpl implements com.javaschool.komarov.reha.service.a
     }
 
     @Override
+    @Transactional
     public void updatePatientStatus(PatientDto patientDto) {
         if (!hasActiveEvent(patientDto.getId())) {
             patientRepo.updatePatientStatus(patientDto.getId(), patientDto.getStatus());
@@ -60,6 +60,7 @@ public class PatientServiceImpl implements com.javaschool.komarov.reha.service.a
     }
 
     @Override
+    @Transactional
     public void setStatusIsTreated(Patient patient) {
         if (!patient.getStatus().equals(PatientStatus.IS_TREATED)) {
             patient.setStatus(PatientStatus.IS_TREATED);

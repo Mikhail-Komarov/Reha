@@ -9,6 +9,7 @@ import com.javaschool.komarov.reha.model.entity.Event;
 import com.javaschool.komarov.reha.model.entity.PrescriptionItem;
 import com.javaschool.komarov.reha.repository.EventRepo;
 import com.javaschool.komarov.reha.service.api.EventService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class EventServiceImpl implements EventService {
@@ -29,13 +31,6 @@ public class EventServiceImpl implements EventService {
     private final EventRepo eventRepo;
     private final EmployeeServiceImpl employeeServiceImpl;
     private final EmployeeMapper employeeMapper;
-
-    public EventServiceImpl(EventMapper eventMapper, EventRepo eventRepo, EmployeeServiceImpl employeeServiceImpl, EmployeeMapper employeeMapper) {
-        this.eventMapper = eventMapper;
-        this.eventRepo = eventRepo;
-        this.employeeServiceImpl = employeeServiceImpl;
-        this.employeeMapper = employeeMapper;
-    }
 
     @Override
     public Iterable<EventDto> getEventsDto(String filterDate, String filterHealthInsurance, String filterStatus) {
@@ -68,6 +63,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void createEvent(PrescriptionItem item, List<LocalDateTime> list, EmployeeDto employee) {
         List<Event> events = new ArrayList<>();
         updateEventStatus(item.getId(), "Date and time pattern was changed", employee);
@@ -115,6 +111,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void updateEventItem(PrescriptionItem itemOld, PrescriptionItem itemNew) {
         Set<Event> events = eventRepo.findActiveEventByPrescriptionItemId(itemOld.getId());
         if (!events.isEmpty()) {
@@ -127,9 +124,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void updateEventStatus(Long id, String cancellationReason, EmployeeDto employee) {
         Set<Event> events = eventRepo.findActiveEventByPrescriptionItemId(id);
-        if(!events.isEmpty()) {
+        if (!events.isEmpty()) {
             for (Event event : events) {
                 if (event.getEventStatus().equals(EventStatus.SCHEDULED)) {
                     event.setEventStatus(EventStatus.CANCELLED);

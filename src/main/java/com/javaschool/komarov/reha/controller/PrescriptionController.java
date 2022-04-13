@@ -5,6 +5,7 @@ import com.javaschool.komarov.reha.model.dto.PrescriptionDto;
 import com.javaschool.komarov.reha.service.impl.PatientServiceImpl;
 import com.javaschool.komarov.reha.service.impl.PrescriptionServiceImpl;
 import com.javaschool.komarov.reha.service.impl.ValidationServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/patient/{id}")
 public class PrescriptionController {
@@ -23,38 +25,68 @@ public class PrescriptionController {
     private final PrescriptionServiceImpl prescriptionServiceImpl;
     private final ValidationServiceImpl validationServiceImpl;
 
-    public PrescriptionController(PatientServiceImpl patientServiceImpl, PrescriptionServiceImpl prescriptionServiceImpl, ValidationServiceImpl validationServiceImpl) {
-        this.patientServiceImpl = patientServiceImpl;
-        this.prescriptionServiceImpl = prescriptionServiceImpl;
-        this.validationServiceImpl = validationServiceImpl;
-    }
-
+    /**
+     * Method return model with patient information
+     *
+     * @param id patient id
+     * @return model
+     */
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
         return patientServiceImpl.getPatientDTOById(id);
     }
 
+    /**
+     * Method return model for new patient
+     *
+     * @return model
+     */
     @ModelAttribute("updatedPatient")
     public PatientDto updatedPatient() {
         return new PatientDto();
     }
 
+    /**
+     * Method return prescriptions for patient
+     *
+     * @param id patient id
+     * @return model
+     */
     @ModelAttribute("prescriptions")
     public Iterable<PrescriptionDto> prescriptions(@PathVariable("id") long id) {
         return prescriptionServiceImpl.getPrescriptionsDTOByPatientId(id);
     }
 
+    /**
+     * Method return model for new prescription
+     *
+     * @return model
+     */
     @ModelAttribute("newPrescription")
     public PrescriptionDto newPrescription() {
         return new PrescriptionDto();
     }
 
+    /**
+     * Method return page with patient's prescriptions
+     *
+     * @return html
+     */
     @GetMapping("/prescription")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String prescription() {
         return "prescription";
     }
 
+    /**
+     * Method to save new prescription for patient
+     *
+     * @param id              patient id
+     * @param userDetails     employee info
+     * @param prescriptionDto new prescription
+     * @param bindingResult   validation result
+     * @return html
+     */
     @PostMapping("/prescription/add")
     @PreAuthorize("hasAnyAuthority('employee:write')")
     public String addPrescription(@PathVariable("id") long id, @AuthenticationPrincipal UserDetails userDetails,
@@ -69,6 +101,14 @@ public class PrescriptionController {
         }
     }
 
+    /**
+     * Method to update patient status
+     *
+     * @param id            patient id
+     * @param patientDto    updatable patient
+     * @param bindingResult validation result
+     * @return html
+     */
     @PostMapping("/prescription/update")
     @PreAuthorize("hasAnyAuthority('employee:write')")
     public String updatePatientStatus(@PathVariable("id") long id,

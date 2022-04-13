@@ -6,13 +6,16 @@ import com.javaschool.komarov.reha.model.dto.PrescriptionDto;
 import com.javaschool.komarov.reha.model.entity.Prescription;
 import com.javaschool.komarov.reha.repository.PrescriptionRepo;
 import com.javaschool.komarov.reha.service.api.PrescriptionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class PrescriptionServiceImpl implements PrescriptionService {
@@ -21,21 +24,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final PatientServiceImpl patientServiceImpl;
     private final PrescriptionRepo prescriptionRepo;
 
-    public PrescriptionServiceImpl(PrescriptionMapper prescriptionMapper,
-                                   EmployeeServiceImpl employeeServiceImpl, PatientServiceImpl patientServiceImpl,
-                                   PrescriptionRepo prescriptionRepo) {
-        this.prescriptionMapper = prescriptionMapper;
-        this.employeeServiceImpl = employeeServiceImpl;
-        this.patientServiceImpl = patientServiceImpl;
-        this.prescriptionRepo = prescriptionRepo;
-    }
-
     @Override
     public Iterable<PrescriptionDto> getPrescriptionsDTOByPatientId(Long id) {
         return prescriptionMapper.toDTOList(prescriptionRepo.findByPatientId(id));
     }
 
     @Override
+    @Transactional
     public void savePrescription(PrescriptionDto prescriptionDto, UserDetails userDetails, Long patientId) {
         Prescription prescription = prescriptionMapper.toModel(prescriptionDto);
         patientServiceImpl.getPatientById(patientId).ifPresent(prescription::setPatient);

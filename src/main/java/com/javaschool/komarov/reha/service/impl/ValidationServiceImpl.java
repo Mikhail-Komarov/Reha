@@ -12,6 +12,7 @@ import com.javaschool.komarov.reha.model.dto.TherapyDto;
 import com.javaschool.komarov.reha.model.entity.PrescriptionItem;
 import com.javaschool.komarov.reha.model.entity.Therapy;
 import com.javaschool.komarov.reha.service.api.ValidationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class ValidationServiceImpl implements ValidationService {
@@ -38,16 +40,6 @@ public class ValidationServiceImpl implements ValidationService {
     private final PrescriptionItemServiceImpl prescriptionItemServiceImpl;
     private final TherapyServiceImpl therapyServiceImpl;
     private final EmployeeServiceImpl employeeServiceImpl;
-
-    public ValidationServiceImpl(PatientServiceImpl patientServiceImpl, EventServiceImpl eventServiceImpl, PrescriptionItemServiceImpl prescriptionItemServiceImpl,
-                                 TherapyServiceImpl therapyServiceImpl,
-                                 EmployeeServiceImpl employeeServiceImpl) {
-        this.patientServiceImpl = patientServiceImpl;
-        this.eventServiceImpl = eventServiceImpl;
-        this.prescriptionItemServiceImpl = prescriptionItemServiceImpl;
-        this.therapyServiceImpl = therapyServiceImpl;
-        this.employeeServiceImpl = employeeServiceImpl;
-    }
 
     @Override
     public void checkPatient(PatientDto patientDto, BindingResult bindingResult) {
@@ -99,6 +91,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param lastName
+     * @param bindingResult
+     */
     private void checkPatientLastName(String lastName, BindingResult bindingResult) {
         if (lastName == null || lastName.isEmpty()) {
             bindingResult.addError(new FieldError("newPatient", "lastName", "The last name should not be empty"));
@@ -107,6 +104,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param healthInsurance
+     * @param bindingResult
+     */
     private void checkPatientHealthInsurance(String healthInsurance, BindingResult bindingResult) {
         if (healthInsurance == null || healthInsurance.isEmpty()) {
             bindingResult.addError(new FieldError("newPatient", "healthInsurance", "The health insurance should not be empty"));
@@ -115,6 +117,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param healthInsurance
+     * @param bindingResult
+     */
     private void checkPatientDuplicate(String healthInsurance, BindingResult bindingResult) {
         if (patientServiceImpl.checkPatientInDb(healthInsurance)) {
             bindingResult.addError(new FieldError("newPatient", "healthInsurance", "This patient has already been registered"));
@@ -140,23 +147,38 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param bindingResult
+     */
     private void checkPrescriptionPatient(Long id, BindingResult bindingResult) {
         if (id == null || !patientServiceImpl.checkPatientInDb(id)) {
             bindingResult.addError(new FieldError("newPrescription", "patient", "Patient should not be empty"));
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param bindingResult
+     */
     private void checkPrescriptionEmployee(Long id, BindingResult bindingResult) {
         if (id == null || !employeeServiceImpl.EmployeeIsExist(id)) {
             bindingResult.addError(new FieldError("newPrescription", "employee", "Employee should not be empty"));
         }
     }
 
+    /**
+     *
+     * @param diagnosis
+     * @param bindingResult
+     */
     private void checkDiagnosis(String diagnosis, BindingResult bindingResult) {
         if (diagnosis == null || diagnosis.isEmpty()) {
             bindingResult.addError(new FieldError("newPrescription", "diagnosis", "Diagnosis should not be empty"));
         } else if (!diagnosis.matches("^[a-zA-Z][a-zA-Z0-9-_.]{1,60}$")) {
-            bindingResult.addError(new FieldError("newPrescription", "diagnosis", "maximum of 60 characters"));
+            bindingResult.addError(new FieldError("newPrescription", "diagnosis", "Invalid characters or exceeded the limit of 60 characters"));
         }
     }
 
@@ -336,7 +358,7 @@ public class ValidationServiceImpl implements ValidationService {
                 bindingResult.addError(new FieldError("newItem", "date", "Date pattern should not be empty!"));
             }
 
-            if (!oldItem.isPresent() && (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty())) {
+            if (!oldItem.isPresent() && (prescriptionItemDto.getTimes() == null || prescriptionItemDto.getTimes().isEmpty())) {
                 bindingResult.addError(new FieldError("newItem", "time", "Time pattern should not be empty!"));
             }
 
@@ -350,6 +372,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param prescriptionItemDto
+     * @param bindingResult
+     */
     private void checkDateParser(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
         if (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty()) {
             prescriptionItemDto.setDate(null);
@@ -365,6 +392,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     *
+     * @param prescriptionItemDto
+     * @param bindingResult
+     */
     private void checkTimeParser(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
         if (prescriptionItemDto.getTimes() == null || prescriptionItemDto.getTimes().isEmpty()) {
             prescriptionItemDto.setTime(null);
@@ -385,8 +417,7 @@ public class ValidationServiceImpl implements ValidationService {
         Optional<PrescriptionItem> prescriptionItem = Optional.empty();
         if (prescriptionItemDto == null) {
             bindingResult.addError(new FieldError("updateItem", "itemID", "Item should not be empty"));
-        }
-        else {
+        } else {
             prescriptionItem = prescriptionItemServiceImpl.getPrescriptionItemById(prescriptionItemDto.getItemId());
         }
         if (!prescriptionItem.isPresent()) {

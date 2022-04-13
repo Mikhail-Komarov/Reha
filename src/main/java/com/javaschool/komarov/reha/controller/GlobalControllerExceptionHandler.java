@@ -14,6 +14,12 @@ import java.util.Arrays;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
+    /**
+     * Method return model with error message
+     *
+     * @param e exception
+     * @return model with error message
+     */
     @ExceptionHandler(value = {PatientNotFoundException.class})
     public ModelAndView handlePatientNotFound(PatientNotFoundException e) {
         ModelAndView model = new ModelAndView("error");
@@ -24,6 +30,12 @@ public class GlobalControllerExceptionHandler {
         return model;
     }
 
+    /**
+     * Method return model with error message
+     *
+     * @param e exception
+     * @return model with error message
+     */
     @ExceptionHandler(value = {PrescriptionNotFoundException.class})
     public ModelAndView handlePrescriptionNotFound(PrescriptionNotFoundException e) {
         ModelAndView model = new ModelAndView("error");
@@ -34,6 +46,12 @@ public class GlobalControllerExceptionHandler {
         return model;
     }
 
+    /**
+     * Method return model with error message
+     *
+     * @param e exception
+     * @return model with error message
+     */
     @ExceptionHandler(value = {PrescriptionItemNotFoundException.class})
     public ModelAndView handleItemNotFound(PrescriptionItemNotFoundException e) {
         ModelAndView model = new ModelAndView("error");
@@ -44,6 +62,12 @@ public class GlobalControllerExceptionHandler {
         return model;
     }
 
+    /**
+     * Method return model with error message
+     *
+     * @param e exception
+     * @return model with error message
+     */
     @ExceptionHandler(value = {Exception.class})
     public ModelAndView handleOtherException(Exception e) {
         ModelAndView model = new ModelAndView("error");

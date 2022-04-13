@@ -5,6 +5,7 @@ import com.javaschool.komarov.reha.model.dto.EventDto;
 import com.javaschool.komarov.reha.service.impl.EventServiceImpl;
 import com.javaschool.komarov.reha.service.impl.SenderServiceImpl;
 import com.javaschool.komarov.reha.service.impl.ValidationServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,31 +17,49 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@RequiredArgsConstructor
 @Controller
 public class EventController {
     private final EventServiceImpl eventServiceImpl;
     private final ValidationServiceImpl validationServiceImpl;
     private final SenderServiceImpl senderServiceImpl;
 
-    public EventController(EventServiceImpl eventServiceImpl, ValidationServiceImpl validationServiceImpl, SenderServiceImpl messageSender) {
-        this.eventServiceImpl = eventServiceImpl;
-        this.validationServiceImpl = validationServiceImpl;
-        this.senderServiceImpl = messageSender;
-    }
-
+    /**
+     * Method return model with events
+     *
+     * @param filterDate            date filter
+     * @param filterHealthInsurance insurance number filter
+     * @param filterStatus          event status filter
+     * @return model
+     */
     @ModelAttribute("events")
     public Iterable<EventDto> prescriptions(@RequestParam(required = false, defaultValue = "") String filterDate,
-                                        @RequestParam(required = false, defaultValue = "") String filterHealthInsurance,
-                                        @RequestParam(required = false, defaultValue = "") String filterStatus) {
+                                            @RequestParam(required = false, defaultValue = "") String filterHealthInsurance,
+                                            @RequestParam(required = false, defaultValue = "") String filterStatus) {
         return eventServiceImpl.getEventsDto(filterDate, filterHealthInsurance, filterStatus);
     }
 
+    /**
+     * Method return page with events
+     *
+     * @param model model with events
+     * @return html
+     */
     @GetMapping("/event")
     public String getEvents(Model model) {
         model.addAttribute("newEvent", new EventDto());
         return "event";
     }
 
+    /**
+     * Method to update event
+     *
+     * @param eventDto      event
+     * @param bindingResult validation result
+     * @param userDetails   employee info
+     * @param model         model with error message
+     * @return html
+     */
     @PostMapping("/event/update")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String updatePatientStatus(@ModelAttribute("newEvent") EventDto eventDto,

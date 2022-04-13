@@ -13,6 +13,7 @@ import com.javaschool.komarov.reha.service.impl.PrescriptionServiceImpl;
 import com.javaschool.komarov.reha.service.impl.SenderServiceImpl;
 import com.javaschool.komarov.reha.service.impl.TherapyServiceImpl;
 import com.javaschool.komarov.reha.service.impl.ValidationServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/patient/{id}/prescription/{num}")
 public class PrescriptionItemController {
@@ -36,60 +38,102 @@ public class PrescriptionItemController {
     private final ValidationServiceImpl validationServiceImpl;
     private final SenderServiceImpl senderServiceImpl;
 
-    public PrescriptionItemController(PatientServiceImpl patientServiceImpl, PrescriptionServiceImpl prescriptionServiceImpl,
-                                      PrescriptionItemServiceImpl prescriptionItemServiceImpl,
-                                      EmployeeServiceImpl employeeServiceImpl, TherapyServiceImpl therapyServiceImpl, ValidationServiceImpl validationServiceImpl,
-                                      SenderServiceImpl senderServiceImpl) {
-        this.patientServiceImpl = patientServiceImpl;
-        this.prescriptionServiceImpl = prescriptionServiceImpl;
-        this.prescriptionItemServiceImpl = prescriptionItemServiceImpl;
-        this.employeeServiceImpl = employeeServiceImpl;
-        this.therapyServiceImpl = therapyServiceImpl;
-        this.validationServiceImpl = validationServiceImpl;
-        this.senderServiceImpl = senderServiceImpl;
-    }
-
+    /**
+     * Method return model with patient info
+     *
+     * @param id patient id
+     * @return model
+     */
     @ModelAttribute("patientInfo")
     public PatientDto patientInfo(@PathVariable("id") long id) {
         return patientServiceImpl.getPatientDTOById(id);
     }
 
+    /**
+     * Method return model with prescription info
+     *
+     * @param num prescription number
+     * @return model
+     */
     @ModelAttribute("prescriptionInfo")
     public PrescriptionDto prescriptionInfo(@PathVariable("num") long num) {
         return prescriptionServiceImpl.getPrescriptionDTOById(num);
     }
 
+    /**
+     * Method return prescription items for patient's prescription
+     *
+     * @param num prescription number
+     * @return model
+     */
     @ModelAttribute("items")
     public Iterable<PrescriptionItemDto> items(@PathVariable("num") long num) {
         return prescriptionItemServiceImpl.getPrescriptionItemDTOByPrescriptionID(num);
     }
 
+    /**
+     * Method return model with employee info
+     *
+     * @param userDetails employee info
+     * @return model
+     */
     @ModelAttribute("doctor")
     public EmployeeDto doctor(@AuthenticationPrincipal UserDetails userDetails) {
         return employeeServiceImpl.getEmployeeDTOByLogin(userDetails.getUsername());
     }
 
+    /**
+     * Method return model for new item
+     *
+     * @return model
+     */
     @ModelAttribute("newItem")
     public PrescriptionItemDto newItem() {
         return new PrescriptionItemDto();
     }
 
+    /**
+     * Method return model for updatable item
+     *
+     * @return model
+     */
     @ModelAttribute("updateItem")
     public PrescriptionItemDto updateItem() {
         return new PrescriptionItemDto();
     }
 
+    /**
+     * Method return model with all available therapies
+     *
+     * @return model
+     */
     @ModelAttribute("therapies")
     public Iterable<TherapyDto> therapies() {
         return therapyServiceImpl.getAllTherapiesDTO();
     }
 
+    /**
+     * Method return page with all prescription items
+     *
+     * @return html
+     */
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String prescription() {
         return "item";
     }
 
+    /**
+     * Method to save new prescription item
+     *
+     * @param id                  patient id
+     * @param num                 prescription number
+     * @param prescriptionItemDto new item
+     * @param bindingResult       validation result
+     * @param userDetails         employee info
+     * @param model               model to adding error messages
+     * @return html
+     */
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String addPrescription(@PathVariable("id") long id, @PathVariable("num") long num,
@@ -108,6 +152,17 @@ public class PrescriptionItemController {
         }
     }
 
+    /**
+     * Method to update prescription item
+     *
+     * @param id                  patient id
+     * @param num                 prescription number
+     * @param prescriptionItemDto updatable item
+     * @param bindingResult       validation result
+     * @param userDetails         employee info
+     * @param model               model to adding error messages
+     * @return html
+     */
     @PostMapping("/upd")
     @PreAuthorize("hasAnyAuthority('employee:read')")
     public String updPrescription(@PathVariable("id") long id, @PathVariable("num") long num,

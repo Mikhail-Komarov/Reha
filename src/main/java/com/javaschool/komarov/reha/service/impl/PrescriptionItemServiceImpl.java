@@ -9,9 +9,11 @@ import com.javaschool.komarov.reha.model.dto.PrescriptionItemDto;
 import com.javaschool.komarov.reha.model.entity.PrescriptionItem;
 import com.javaschool.komarov.reha.repository.PrescriptionItemRepo;
 import com.javaschool.komarov.reha.service.api.PrescriptionItemService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class PrescriptionItemServiceImpl implements PrescriptionItemService {
@@ -34,20 +37,6 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
     private final PrescriptionServiceImpl prescriptionServiceImpl;
     private final EventServiceImpl eventServiceImpl;
     private final PatientServiceImpl patientServiceImpl;
-
-    public PrescriptionItemServiceImpl(PrescriptionItemMapper prescriptionItemMapper, PrescriptionItemRepo prescriptionItemRepo, EmployeeMapper employeeMapper,
-                                       EmployeeServiceImpl employeeServiceImpl, TherapyServiceImpl therapyServiceImpl, PrescriptionServiceImpl prescriptionServiceImpl,
-                                       EventServiceImpl eventServiceImpl,
-                                       PatientServiceImpl patientServiceImpl) {
-        this.prescriptionItemMapper = prescriptionItemMapper;
-        this.prescriptionItemRepo = prescriptionItemRepo;
-        this.employeeMapper = employeeMapper;
-        this.employeeServiceImpl = employeeServiceImpl;
-        this.therapyServiceImpl = therapyServiceImpl;
-        this.prescriptionServiceImpl = prescriptionServiceImpl;
-        this.eventServiceImpl = eventServiceImpl;
-        this.patientServiceImpl = patientServiceImpl;
-    }
 
     @Override
     public Iterable<PrescriptionItemDto> getPrescriptionItemDTOByPrescriptionID(Long id) {
@@ -66,6 +55,7 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
     }
 
     @Override
+    @Transactional
     public void savePrescriptionItem(PrescriptionItemDto prescriptionItemDto, UserDetails userDetails) {
         EmployeeDto employeeDTO = employeeServiceImpl.getEmployeeDTOByLogin(userDetails.getUsername());
         if (prescriptionItemDto.getDates() != null && prescriptionItemDto.getTimes() != null) {
@@ -85,6 +75,7 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
     }
 
     @Override
+    @Transactional
     public void updatePrescriptionItem(PrescriptionItemDto prescriptionItemDto, UserDetails userDetails) {
         EmployeeDto employee = employeeServiceImpl.getEmployeeDTOByLogin(userDetails.getUsername());
         Optional<PrescriptionItem> item = prescriptionItemRepo.findById(prescriptionItemDto.getItemId());
@@ -135,6 +126,12 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
         });
     }
 
+    /**
+     * Method to create duplicate prescription item
+     *
+     * @param item prescription item
+     * @return duplicate
+     */
     private PrescriptionItem createDuplicateItem(PrescriptionItem item) {
         PrescriptionItem duplicateItem = new PrescriptionItem();
         duplicateItem.setId(null);
@@ -161,6 +158,13 @@ public class PrescriptionItemServiceImpl implements PrescriptionItemService {
         return strings.stream().map(LocalTime::parse).collect(Collectors.toList());
     }
 
+    /**
+     * Method to create date and time pattern
+     *
+     * @param dates dates
+     * @param times times
+     * @return date and time pattern
+     */
     private String createDateAndTimePattern(List<LocalDate> dates, List<LocalTime> times) {
         return (times.size() + " time(s) per day, " + dates.size() + " days, "
                 + dates.stream().map(p -> p.getDayOfWeek().name()).collect(Collectors.toSet()));
