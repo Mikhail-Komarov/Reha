@@ -41,12 +41,6 @@ public class TherapyServiceTest {
     }
 
     @Test
-    public void therapyIsExist() {
-        therapyService.therapyIsExist("test");
-        Mockito.verify(therapyRepo, Mockito.times(1)).findByName("test");
-    }
-
-    @Test
     public void saveTherapy() {
         TherapyDto therapyDto = new TherapyDto();
         therapyService.saveTherapy(therapyDto);
