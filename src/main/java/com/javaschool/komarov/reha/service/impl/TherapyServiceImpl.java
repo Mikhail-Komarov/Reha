@@ -29,10 +29,6 @@ public class TherapyServiceImpl implements TherapyService {
         return therapyRepo.findById(id);
     }
 
-    public boolean therapyIsExist(String name) {
-        return therapyRepo.findByName(name).isPresent();
-    }
-
     @Override
     @Transactional
     public void saveTherapy(TherapyDto therapyDto) {

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,11 +66,14 @@ public class ValidationServiceImpl implements ValidationService {
         if (therapyDto == null) {
             bindingResult.addError(new FieldError("newTherapy", "id", "Therapy should not be null"));
         } else {
+            Iterable <TherapyDto> therapies = therapyServiceImpl.getAllTherapiesDTO();
+            List<String> therapiesNames = new ArrayList<>();
+            therapies.forEach((therapyDto1 -> therapiesNames.add(therapyDto1.getName().toLowerCase(Locale.ROOT))));
             if (therapyDto.getName() == null || therapyDto.getName().isEmpty()) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "Therapy name should not be null"));
             } else if (!therapyDto.getName().matches("^[a-zA-Z][a-zA-Z]{1,20}$")) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "The use of numbers and special characters is not allowed"));
-            } else if (therapyServiceImpl.therapyIsExist(therapyDto.getName())) {
+            } else if (therapiesNames.contains(therapyDto.getName().toLowerCase(Locale.ROOT))) {
                 bindingResult.addError(new FieldError("newTherapy", "name", "Therapy with this name is exist"));
             }
 
@@ -83,6 +87,12 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Method to check patient's first name
+     *
+     * @param firstName     first name
+     * @param bindingResult validation result
+     */
     private void checkPatientFirstName(String firstName, BindingResult bindingResult) {
         if (firstName == null || firstName.isEmpty()) {
             bindingResult.addError(new FieldError("newPatient", "firstName", "The first name should not be empty"));
@@ -92,9 +102,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check patient's last name
      *
-     * @param lastName
-     * @param bindingResult
+     * @param lastName      last name
+     * @param bindingResult validation result
      */
     private void checkPatientLastName(String lastName, BindingResult bindingResult) {
         if (lastName == null || lastName.isEmpty()) {
@@ -105,9 +116,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check validity patient's insurance number
      *
-     * @param healthInsurance
-     * @param bindingResult
+     * @param healthInsurance insurance number
+     * @param bindingResult   validation result
      */
     private void checkPatientHealthInsurance(String healthInsurance, BindingResult bindingResult) {
         if (healthInsurance == null || healthInsurance.isEmpty()) {
@@ -118,9 +130,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check patient's duplicate in DB
      *
-     * @param healthInsurance
-     * @param bindingResult
+     * @param healthInsurance insurance number
+     * @param bindingResult   validation result
      */
     private void checkPatientDuplicate(String healthInsurance, BindingResult bindingResult) {
         if (patientServiceImpl.checkPatientInDb(healthInsurance)) {
@@ -148,9 +161,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check patient in DB
      *
-     * @param id
-     * @param bindingResult
+     * @param id            patient id
+     * @param bindingResult validation result
      */
     private void checkPrescriptionPatient(Long id, BindingResult bindingResult) {
         if (id == null || !patientServiceImpl.checkPatientInDb(id)) {
@@ -159,9 +173,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check employee in DB
      *
-     * @param id
-     * @param bindingResult
+     * @param id            employee id
+     * @param bindingResult validation result
      */
     private void checkPrescriptionEmployee(Long id, BindingResult bindingResult) {
         if (id == null || !employeeServiceImpl.EmployeeIsExist(id)) {
@@ -170,9 +185,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check diagnosis
      *
-     * @param diagnosis
-     * @param bindingResult
+     * @param diagnosis     diagnosis
+     * @param bindingResult validation result
      */
     private void checkDiagnosis(String diagnosis, BindingResult bindingResult) {
         if (diagnosis == null || diagnosis.isEmpty()) {
@@ -373,9 +389,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check date parser
      *
-     * @param prescriptionItemDto
-     * @param bindingResult
+     * @param prescriptionItemDto prescription itemDTO
+     * @param bindingResult       validation result
      */
     private void checkDateParser(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
         if (prescriptionItemDto.getDates() == null || prescriptionItemDto.getDates().isEmpty()) {
@@ -393,9 +410,10 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     /**
+     * Method to check time parser
      *
-     * @param prescriptionItemDto
-     * @param bindingResult
+     * @param prescriptionItemDto prescription itemDTO
+     * @param bindingResult       validation result
      */
     private void checkTimeParser(PrescriptionItemDto prescriptionItemDto, BindingResult bindingResult) {
         if (prescriptionItemDto.getTimes() == null || prescriptionItemDto.getTimes().isEmpty()) {
