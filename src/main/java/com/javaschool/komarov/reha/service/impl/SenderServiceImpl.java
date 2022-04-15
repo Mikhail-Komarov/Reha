@@ -10,6 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,4 +37,10 @@ public class SenderServiceImpl implements SenderService {
             }
         }
     }
+
+    @PostConstruct
+    private void initMessage() {
+        sendEvents();
+    }
+
 }
